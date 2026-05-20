@@ -1,0 +1,12 @@
+{
+  "name": "noa-caffe-qr-menu",
+  "version": "1.0.0",
+  "description": "Noa Caffe & Co - QR Menü Sistemi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {}
+
+}

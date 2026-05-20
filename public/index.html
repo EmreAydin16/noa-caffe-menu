@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>NOA caffé & co | Menü</title>
+    <meta name="theme-color" content="#1b1410">
+    <meta property="og:title" content="NOA caffé & co">
+    <meta property="og:description" content="Kahve & Fast Food - Cumhuriyet Caddesi, Bursa">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:type" content="website">
+    <meta name="apple-mobile-web-app-title" content="NOA caffé & co">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="icon" type="image/png" href="/logo.png">
+</head>
+<body>
+
+    <!-- HERO -->
+    <header class="hero">
+        <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=60">
+            <source src="" type="video/mp4">
+        </video>
+        <div class="hero-dim"></div>
+        <div class="hero-grain"></div>
+        <div class="hero-content">
+            <div class="hero-badge">EST. 2026 &middot; BURSA</div>
+            <h1 class="hero-noa">NOA</h1>
+            <p class="hero-caffe">caffé <span>&</span> co</p>
+            <div class="hero-divider"><span></span></div>
+            <p class="hero-tagline">Cumhuriyet Caddesi</p>
+        </div>
+        <a class="hero-scroll" id="heroScroll">
+            <div class="hero-scroll-line"></div>
+        </a>
+    </header>
+
+    <!-- NAV -->
+    <nav class="topbar" id="topbar">
+        <div class="topbar-logo">NOA</div>
+        <div class="topbar-cats" id="topbarCats"></div>
+    </nav>
+
+    <!-- HIGHLIGHTS -->
+    <section class="highlights" id="highlights">
+        <div class="wrap">
+            <div class="sec-label">★ Favoriler</div>
+            <div class="hl-scroll" id="hlScroll"></div>
+        </div>
+    </section>
+
+    <!-- MENU -->
+    <main class="content" id="content">
+        <div class="wrap" id="menuWrap">
+            <div class="spinner" id="spinner"><div class="spin-ring"></div></div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="ft">
+        <div class="ft-inner">
+            <div class="ft-brand">
+                <span class="ft-noa">NOA</span>
+                <span class="ft-caffe">caffé <em>&</em> co</span>
+            </div>
+            <div class="ft-links" id="ftLinks"></div>
+            <p class="ft-note">Fiyatlarımıza KDV dahildir</p>
+            <p class="ft-copy">© 2026 NOA caffé & co &middot; Bursa</p>
+        </div>
+    </footer>
+
+    <!-- DETAIL SHEET -->
+    <div class="detail" id="detail">
+        <div class="detail-bg" onclick="closeDetail()"></div>
+        <div class="detail-panel">
+            <div class="detail-bar"><div class="detail-pill"></div></div>
+            <div class="detail-hero" id="detailHero"></div>
+            <div class="detail-body">
+                <div class="detail-badge" id="detailBadge"></div>
+                <h3 class="detail-name" id="detailName"></h3>
+                <p class="detail-desc" id="detailDesc"></p>
+                <div class="detail-footer">
+                    <div class="detail-price" id="detailPrice"></div>
+                    <div class="detail-stamp">NOA caffé & co</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="to-top" id="toTop">↑</button>
+
+    <script src="/js/menu.js"></script>
+</body>
+</html>

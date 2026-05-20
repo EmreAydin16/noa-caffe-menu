@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noa Caffe & Co | Yönetim Paneli</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="icon" type="image/png" href="/logo.png">
+</head>
+<body>
+    <div class="admin-app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="/logo.png" alt="Logo" class="sidebar-logo">
+                <h2>Noa Caffe & Co</h2>
+                <span class="sidebar-badge">Yönetim Paneli</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="menu" onclick="showPage('menu')">
+                    <span class="nav-icon">📋</span> Menü Yönetimi
+                </a>
+                <a href="#" class="nav-item" data-page="categories" onclick="showPage('categories')">
+                    <span class="nav-icon">📂</span> Kategoriler
+                </a>
+                <a href="#" class="nav-item" data-page="settings" onclick="showPage('settings')">
+                    <span class="nav-icon">⚙️</span> Ayarlar
+                </a>
+                <a href="#" class="nav-item" data-page="qr" onclick="showPage('qr')">
+                    <span class="nav-icon">📱</span> QR Kod
+                </a>
+                <div class="nav-divider"></div>
+                <a href="/" class="nav-item" target="_blank">
+                    <span class="nav-icon">👁️</span> Menüyü Görüntüle
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <span class="mobile-title">Noa Caffe & Co</span>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Menu Management Page -->
+            <div class="page active" id="page-menu">
+                <div class="page-header">
+                    <div>
+                        <h1>Menü Yönetimi</h1>
+                        <p class="page-subtitle">Ürünleri ekleyin, düzenleyin veya kaldırın</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddItemModal()">+ Yeni Ürün Ekle</button>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="filter-bar">
+                    <select id="categoryFilter" class="input" onchange="filterItems()">
+                        <option value="all">Tüm Kategoriler</option>
+                    </select>
+                    <input type="text" id="searchInput" class="input" placeholder="Ürün ara..." oninput="filterItems()">
+                </div>
+
+                <!-- Items Table -->
+                <div class="table-container">
+                    <table class="data-table" id="menuTable">
+                        <thead>
+                            <tr>
+                                <th>Ürün Adı</th>
+                                <th>Açıklama</th>
+                                <th>Kategori</th>
+                                <th>Fiyat (₺)</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Categories Page -->
+            <div class="page" id="page-categories">
+                <div class="page-header">
+                    <div>
+                        <h1>Kategoriler</h1>
+                        <p class="page-subtitle">Menü kategorilerini yönetin</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddCategoryModal()">+ Yeni Kategori</button>
+                </div>
+                <div class="categories-grid" id="categoriesGrid"></div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="page-settings">
+                <div class="page-header">
+                    <div>
+                        <h1>Ayarlar</h1>
+                        <p class="page-subtitle">Restoran bilgilerini düzenleyin</p>
+                    </div>
+                </div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>Restoran Adı</label>
+                        <input type="text" id="settingName" class="input" value="Noa Caffe & Co">
+                    </div>
+                    <div class="form-group">
+                        <label>Adres</label>
+                        <input type="text" id="settingAddress" class="input" value="Cumhuriyet Caddesi, Bursa">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon</label>
+                        <input type="text" id="settingPhone" class="input" placeholder="0224 xxx xx xx">
+                    </div>
+                    <div class="form-group">
+                        <label>Instagram (kullanıcı adı)</label>
+                        <input type="text" id="settingInstagram" class="input" placeholder="noacaffeco">
+                    </div>
+                    <div class="form-group">
+                        <label>Açıklama</label>
+                        <input type="text" id="settingDescription" class="input" value="Kahve & Fast Food">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">Ayarları Kaydet</button>
+                </div>
+            </div>
+
+            <!-- QR Code Page -->
+            <div class="page" id="page-qr">
+                <div class="page-header">
+                    <div>
+                        <h1>QR Kod</h1>
+                        <p class="page-subtitle">Menü QR kodunu indirin ve masalara yerleştirin</p>
+                    </div>
+                </div>
+                <div class="qr-section">
+                    <div class="qr-card">
+                        <div class="qr-preview" id="qrPreview">
+                            <img id="qrImage" src="" alt="QR Kod">
+                        </div>
+                        <div class="qr-info">
+                            <h3>Menü QR Kodu</h3>
+                            <p>Bu QR kodu masalarınıza yerleştirin. Müşteriler telefonlarıyla tarayarak menünüze ulaşabilir.</p>
+                            <div class="qr-url" id="qrUrl"></div>
+                            <button class="btn btn-primary" onclick="downloadQR()">📥 QR Kodu İndir</button>
+                        </div>
+                    </div>
+                    <div class="qr-card">
+                        <div class="qr-print-preview" id="qrPrintPreview">
+                            <div class="print-card">
+                                <img src="/logo.png" alt="Logo" class="print-logo">
+                                <h2>Noa Caffe & Co</h2>
+                                <p class="print-subtitle">Menümüzü görüntülemek için QR kodu tarayın</p>
+                                <img id="qrImagePrint" src="" alt="QR" class="print-qr">
+                                <p class="print-wifi">WiFi: ____________</p>
+                            </div>
+                        </div>
+                        <div class="qr-info">
+                            <h3>Masa Kartı Şablonu</h3>
+                            <p>Yazdırıp masalarınıza yerleştirebileceğiniz hazır kart tasarımı.</p>
+                            <button class="btn btn-outline" onclick="printTableCard()">🖨️ Masa Kartını Yazdır</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitle">Yeni Ürün Ekle</h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>
