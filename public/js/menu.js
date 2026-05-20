@@ -5,89 +5,84 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const r = await fetch('/api/menu');
         D = await r.json();
-        buildHighlights();
-        buildNav();
-        buildMenu();
-        buildFooter();
-        document.getElementById('spinner').remove();
+        renderPicks();
+        renderBar();
+        renderMenu();
+        renderFoot();
+        document.getElementById('loader').remove();
         observe();
     } catch {
-        document.getElementById('spinner').innerHTML =
-            '<p style="color:#a33;font-size:.88rem">Menü yüklenemedi.</p>';
+        document.getElementById('loader').innerHTML =
+            '<p style="color:#a33;font-size:.85rem">Menü yüklenemedi.</p>';
     }
 });
 
 function wire() {
-    document.getElementById('heroScroll').addEventListener('click', () => {
-        (document.getElementById('highlights') || document.getElementById('content'))
+    document.getElementById('heroBtn').onclick = () =>
+        (document.getElementById('picks') || document.getElementById('main'))
             .scrollIntoView({ behavior: 'smooth' });
-    });
 
-    document.getElementById('toTop').addEventListener('click', () =>
-        window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-    window.addEventListener('scroll', () => {
-        document.getElementById('toTop').classList.toggle('show', scrollY > 600);
-        document.getElementById('topbar').classList.toggle('shadow', scrollY > 200);
+    const fab = document.getElementById('fab');
+    fab.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+    addEventListener('scroll', () => {
+        fab.classList.toggle('show', scrollY > 600);
+        document.getElementById('bar').classList.toggle('shd', scrollY > 200);
     }, { passive: true });
 
-    const dp = document.querySelector('.detail-panel');
-    let sy = 0;
-    dp.addEventListener('touchstart', e => sy = e.touches[0].clientY, { passive: true });
-    dp.addEventListener('touchmove', e => {
-        if (e.touches[0].clientY - sy > 90) closeDetail();
+    const sheet = document.querySelector('.modal-sheet');
+    let y0 = 0;
+    sheet.addEventListener('touchstart', e => y0 = e.touches[0].clientY, { passive: true });
+    sheet.addEventListener('touchmove', e => {
+        if (e.touches[0].clientY - y0 > 80) closeModal();
     }, { passive: true });
 }
 
-/* ============ HIGHLIGHTS ============ */
-function buildHighlights() {
-    const box = document.getElementById('hlScroll');
+/* ============ PICKS ============ */
+function renderPicks() {
+    const el = document.getElementById('picksGrid');
     const pops = [];
     D.categories.forEach(c => c.items.forEach(i => {
         if (i.popular && i.available && i.image) pops.push({ ...i, _c: c.name, _i: c.icon });
     }));
-    if (!pops.length) { document.getElementById('highlights').remove(); return; }
+    if (!pops.length) { document.getElementById('picks').remove(); return; }
 
-    box.innerHTML = pops.map(p => `
-        <div class="hl-card" onclick='openDetail(${j(p)})'>
-            <img class="hl-card-img" src="${p.image}" alt="${p.name}" loading="lazy">
-            <div class="hl-card-grad"></div>
-            <div class="hl-card-wm">NOA caffé & co</div>
-            <div class="hl-card-info">
-                <div class="hl-card-name">${p.name}</div>
-                <div class="hl-card-row">
-                    <span class="hl-card-cat">${p._i} ${p._c}</span>
-                    <span class="hl-card-price">${p.price} ₺</span>
-                </div>
+    el.innerHTML = pops.map(p => `
+        <div class="pk" onclick='showItem(${esc(p)})'>
+            <img src="${p.image}" alt="${p.name}" loading="lazy">
+            <div class="pk-grad"></div>
+            <div class="pk-wm">NOA caffé & co</div>
+            <div class="pk-body">
+                <div class="pk-cat">${p._i} ${p._c}</div>
+                <div class="pk-name">${p.name}</div>
+                <div class="pk-price">${p.price} ₺</div>
             </div>
         </div>
     `).join('');
 }
 
-/* ============ NAV ============ */
-function buildNav() {
-    const box = document.getElementById('topbarCats');
-    box.innerHTML = D.categories.map(c =>
-        `<button class="t-tab" data-id="${c.id}" onclick="jump('${c.id}')">${c.icon} ${c.name}</button>`
+/* ============ BAR ============ */
+function renderBar() {
+    const el = document.getElementById('barScroll');
+    el.innerHTML = D.categories.map(c =>
+        `<button class="pill" data-id="${c.id}" onclick="go('${c.id}')">${c.icon} ${c.name}</button>`
     ).join('');
     spy();
 }
 
-function jump(id) {
-    const el = document.getElementById('s-' + id);
-    if (!el) return;
-    const off = document.getElementById('topbar').offsetHeight + 8;
-    window.scrollTo({ top: el.offsetTop - off, behavior: 'smooth' });
+function go(id) {
+    const s = document.getElementById('s-' + id);
+    if (!s) return;
+    scrollTo({ top: s.offsetTop - 60, behavior: 'smooth' });
 }
 
 function spy() {
-    const tabs = document.querySelectorAll('.t-tab');
+    const pills = document.querySelectorAll('.pill');
     const io = new IntersectionObserver(es => {
         es.forEach(e => {
             if (!e.isIntersecting) return;
             const id = e.target.id.replace('s-', '');
-            tabs.forEach(t => t.classList.toggle('on', t.dataset.id === id));
-            document.querySelector(`.t-tab[data-id="${id}"]`)
+            pills.forEach(p => p.classList.toggle('on', p.dataset.id === id));
+            document.querySelector(`.pill[data-id="${id}"]`)
                 ?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         });
     }, { rootMargin: '-70px 0px -60% 0px', threshold: 0.05 });
@@ -98,86 +93,89 @@ function spy() {
 }
 
 /* ============ MENU ============ */
-function buildMenu() {
-    const box = document.getElementById('menuWrap');
+function renderMenu() {
+    const box = document.getElementById('menuInner');
     D.categories.forEach((cat, ci) => {
         const sec = document.createElement('section');
-        sec.className = 'm-sec rv';
+        sec.className = 'cat-sec rv';
         sec.id = 's-' + cat.id;
-        sec.style.transitionDelay = ci * 0.05 + 's';
+        sec.style.transitionDelay = ci * 0.04 + 's';
+
+        const cards = cat.items.map((it, ii) => {
+            const img = it.image
+                ? `<img class="card-img" src="${it.image}" alt="${it.name}" loading="lazy"
+                        onerror="this.outerHTML='<div class=card-noimg>${cat.icon}</div>'">`
+                : `<div class="card-noimg">${cat.icon}</div>`;
+            const badge = it.popular ? `<span class="card-badge">Hit</span>` : '';
+            const cls = it.available === false ? ' off' : '';
+
+            return `<div class="card${cls}" style="animation-delay:${ci * 0.04 + ii * 0.03}s"
+                         onclick='showItem(${esc(it, cat)})'>
+                ${img}
+                <div class="card-body">
+                    <div class="card-name">${it.name}</div>
+                    <div class="card-desc">${it.description || ''}</div>
+                    <div class="card-foot">
+                        <span class="card-price">${it.price} ₺</span>
+                        ${badge}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
 
         sec.innerHTML = `
-            <div class="m-head">
-                <span class="m-icon">${cat.icon}</span>
-                <h2 class="m-title">${cat.name}</h2>
+            <div class="cat-banner">
+                <img src="${cat.banner || ''}" alt="${cat.name}" loading="lazy"
+                     onerror="this.parentElement.style.background='linear-gradient(135deg,var(--espresso),var(--brown))'">
+                <div class="cat-banner-dim">
+                    <span class="cat-banner-icon">${cat.icon}</span>
+                    <div class="cat-banner-text">
+                        <h2>${cat.name}</h2>
+                        <span>${cat.items.length} çeşit</span>
+                    </div>
+                </div>
             </div>
-            <div class="m-line"></div>
-            ${cat.items.map(it => {
-                const img = it.image
-                    ? `<img class="m-img" src="${it.image}" alt="${it.name}" loading="lazy"
-                            onerror="this.outerHTML='<div class=m-no-img>${cat.icon}</div>'">`
-                    : `<div class="m-no-img">${cat.icon}</div>`;
-                const hit = it.popular ? '<span class="m-hit">HIT</span>' : '';
-                const cls = it.available === false ? ' off' : '';
-                return `
-                    <div class="m-item${cls}" onclick='openDetail(${j(it, cat)})'>
-                        ${img}
-                        <div class="m-info">
-                            <div class="m-name-row">
-                                <span class="m-name">${it.name}</span>${hit}
-                            </div>
-                            <div class="m-desc">${it.description || ''}</div>
-                        </div>
-                        <div class="m-price">${it.price}<span class="m-cur"> ₺</span></div>
-                    </div>`;
-            }).join('')}
+            <div class="grid">${cards}</div>
         `;
         box.appendChild(sec);
     });
 }
 
-/* ============ DETAIL ============ */
-function openDetail(raw) {
+/* ============ MODAL ============ */
+function showItem(raw) {
     let d; try { d = JSON.parse(raw); } catch { return; }
-    const el = document.getElementById('detail');
-    const hero = document.getElementById('detailHero');
-
+    const v = document.getElementById('modalVisual');
     if (d.image) {
-        hero.innerHTML = `<img src="${d.image}" alt="${d.name}">`;
-        hero.style.display = '';
-    } else {
-        hero.style.display = 'none';
-    }
+        v.innerHTML = `<img src="${d.image}" alt="${d.name}">`;
+        v.style.display = '';
+    } else v.style.display = 'none';
 
-    document.getElementById('detailBadge').textContent =
-        (d._i || d.catIcon || '') + ' ' + (d._c || d.catName || '');
-    document.getElementById('detailName').textContent = d.name;
-    document.getElementById('detailDesc').textContent = d.description || '';
-    document.getElementById('detailPrice').textContent = d.price + ' ₺';
-
-    el.classList.add('open');
+    document.getElementById('modalTag').textContent = (d._i || d.catIcon || '') + ' ' + (d._c || d.catName || '');
+    document.getElementById('modalTitle').textContent = d.name;
+    document.getElementById('modalDesc').textContent = d.description || '';
+    document.getElementById('modalPrice').textContent = d.price + ' ₺';
+    document.getElementById('modal').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
-function closeDetail() {
-    document.getElementById('detail').classList.remove('open');
+function closeModal() {
+    document.getElementById('modal').classList.remove('open');
     document.body.style.overflow = '';
 }
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 /* ============ FOOTER ============ */
-function buildFooter() {
-    const info = D.restaurant; if (!info) return;
-    const el = document.getElementById('ftLinks');
-    let h = `<span>${info.address || 'Cumhuriyet Caddesi, Bursa'}</span>`;
-    if (info.phone) h += `<a href="tel:${info.phone}">${info.phone}</a>`;
-    if (info.instagram) h += `<a href="https://instagram.com/${info.instagram}" target="_blank">@${info.instagram}</a>`;
+function renderFoot() {
+    const r = D.restaurant; if (!r) return;
+    const el = document.getElementById('footMid');
+    let h = `<span>${r.address || 'Cumhuriyet Caddesi, Bursa'}</span>`;
+    if (r.phone) h += `<a href="tel:${r.phone}">${r.phone}</a>`;
+    if (r.instagram) h += `<a href="https://instagram.com/${r.instagram}" target="_blank">@${r.instagram}</a>`;
     el.innerHTML = h;
 }
 
-/* ============ HELPERS ============ */
-function j(item, cat) {
+/* ============ UTILS ============ */
+function esc(item, cat) {
     const o = {
         name: item.name, description: item.description, price: item.price,
         image: item.image || '',
@@ -192,6 +190,6 @@ function observe() {
         es.forEach(e => {
             if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); }
         });
-    }, { rootMargin: '0px 0px -30px 0px', threshold: 0.1 });
+    }, { rootMargin: '0px 0px -30px 0px', threshold: 0.08 });
     document.querySelectorAll('.rv').forEach(el => io.observe(el));
 }

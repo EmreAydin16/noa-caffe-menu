@@ -4,92 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>NOA caffé & co | Menü</title>
-    <meta name="theme-color" content="#1b1410">
+    <meta name="theme-color" content="#141010">
     <meta property="og:title" content="NOA caffé & co">
     <meta property="og:description" content="Kahve & Fast Food - Cumhuriyet Caddesi, Bursa">
     <meta property="og:image" content="/logo.png">
-    <meta property="og:type" content="website">
     <meta name="apple-mobile-web-app-title" content="NOA caffé & co">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="icon" type="image/png" href="/logo.png">
 </head>
 <body>
 
-    <!-- HERO -->
-    <header class="hero">
-        <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=60">
-            <source src="" type="video/mp4">
-        </video>
-        <div class="hero-dim"></div>
-        <div class="hero-grain"></div>
-        <div class="hero-content">
-            <div class="hero-badge">EST. 2026 &middot; BURSA</div>
-            <h1 class="hero-noa">NOA</h1>
-            <p class="hero-caffe">caffé <span>&</span> co</p>
-            <div class="hero-divider"><span></span></div>
-            <p class="hero-tagline">Cumhuriyet Caddesi</p>
+    <!-- ===== HERO ===== -->
+    <header class="hero" id="hero">
+        <div class="hero-media">
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=70" alt="" class="hero-img">
         </div>
-        <a class="hero-scroll" id="heroScroll">
-            <div class="hero-scroll-line"></div>
-        </a>
+        <div class="hero-overlay"></div>
+        <div class="hero-center">
+            <span class="hero-est">— EST. 2026 —</span>
+            <h1 class="hero-logo-text">
+                <span class="hero-n">N</span><span class="hero-o">O</span><span class="hero-a">A</span>
+            </h1>
+            <p class="hero-sub">caffé <span>&</span> co</p>
+            <div class="hero-sep"></div>
+            <p class="hero-loc">Cumhuriyet Caddesi &bull; Bursa</p>
+        </div>
+        <div class="hero-bottom">
+            <button class="hero-btn" id="heroBtn">
+                Menüyü Keşfet
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+        </div>
     </header>
 
-    <!-- NAV -->
-    <nav class="topbar" id="topbar">
-        <div class="topbar-logo">NOA</div>
-        <div class="topbar-cats" id="topbarCats"></div>
+    <!-- ===== TOPBAR ===== -->
+    <nav class="bar" id="bar">
+        <div class="bar-brand">NOA<span>caffé</span></div>
+        <div class="bar-scroll" id="barScroll"></div>
     </nav>
 
-    <!-- HIGHLIGHTS -->
-    <section class="highlights" id="highlights">
-        <div class="wrap">
-            <div class="sec-label">★ Favoriler</div>
-            <div class="hl-scroll" id="hlScroll"></div>
+    <!-- ===== PICKS ===== -->
+    <section class="picks" id="picks">
+        <div class="inner">
+            <div class="tag">En Sevilenler</div>
+            <div class="picks-grid" id="picksGrid"></div>
         </div>
     </section>
 
-    <!-- MENU -->
-    <main class="content" id="content">
-        <div class="wrap" id="menuWrap">
-            <div class="spinner" id="spinner"><div class="spin-ring"></div></div>
+    <!-- ===== MENU ===== -->
+    <main class="main" id="main">
+        <div class="inner" id="menuInner">
+            <div class="loader" id="loader"><div class="dot-pulse"></div></div>
         </div>
     </main>
 
-    <!-- FOOTER -->
-    <footer class="ft">
-        <div class="ft-inner">
-            <div class="ft-brand">
-                <span class="ft-noa">NOA</span>
-                <span class="ft-caffe">caffé <em>&</em> co</span>
-            </div>
-            <div class="ft-links" id="ftLinks"></div>
-            <p class="ft-note">Fiyatlarımıza KDV dahildir</p>
-            <p class="ft-copy">© 2026 NOA caffé & co &middot; Bursa</p>
+    <!-- ===== FOOTER ===== -->
+    <footer class="foot">
+        <div class="foot-top">
+            <div class="foot-noa">NOA</div>
+            <div class="foot-sub">caffé <em>&</em> co</div>
+        </div>
+        <div class="foot-mid" id="footMid"></div>
+        <div class="foot-bot">
+            <p>Fiyatlarımıza KDV dahildir</p>
+            <p>© 2026 NOA caffé & co</p>
         </div>
     </footer>
 
-    <!-- DETAIL SHEET -->
-    <div class="detail" id="detail">
-        <div class="detail-bg" onclick="closeDetail()"></div>
-        <div class="detail-panel">
-            <div class="detail-bar"><div class="detail-pill"></div></div>
-            <div class="detail-hero" id="detailHero"></div>
-            <div class="detail-body">
-                <div class="detail-badge" id="detailBadge"></div>
-                <h3 class="detail-name" id="detailName"></h3>
-                <p class="detail-desc" id="detailDesc"></p>
-                <div class="detail-footer">
-                    <div class="detail-price" id="detailPrice"></div>
-                    <div class="detail-stamp">NOA caffé & co</div>
+    <!-- ===== DETAIL ===== -->
+    <div class="modal" id="modal">
+        <div class="modal-bg" onclick="closeModal()"></div>
+        <div class="modal-sheet">
+            <div class="modal-pill"></div>
+            <div class="modal-visual" id="modalVisual"></div>
+            <div class="modal-content">
+                <span class="modal-tag" id="modalTag"></span>
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <p class="modal-desc" id="modalDesc"></p>
+                <div class="modal-row">
+                    <span class="modal-price" id="modalPrice"></span>
+                    <span class="modal-wm">NOA caffé & co</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <button class="to-top" id="toTop">↑</button>
+    <!-- ===== FAB ===== -->
+    <button class="fab" id="fab" aria-label="Yukarı">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
 
     <script src="/js/menu.js"></script>
 </body>
