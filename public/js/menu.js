@@ -1,4 +1,5 @@
 let D;
+const itemStore = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     wire();
@@ -37,6 +38,19 @@ function wire() {
     }, { passive: true });
 }
 
+function storeItem(item, cat) {
+    const idx = itemStore.length;
+    itemStore.push({
+        name: item.name,
+        description: item.description || '',
+        price: item.price,
+        image: item.image || '',
+        catName: cat ? cat.name : item._c || '',
+        catIcon: cat ? cat.icon : item._i || ''
+    });
+    return idx;
+}
+
 /* ============ PICKS ============ */
 function renderPicks() {
     const el = document.getElementById('picksGrid');
@@ -46,8 +60,10 @@ function renderPicks() {
     }));
     if (!pops.length) { document.getElementById('picks').remove(); return; }
 
-    el.innerHTML = pops.map(p => `
-        <div class="pk" onclick='showItem(${esc(p)})'>
+    el.innerHTML = pops.map(p => {
+        const idx = storeItem(p, null);
+        return `
+        <div class="pk" onclick="showItem(${idx})">
             <img src="${p.image}" alt="${p.name}" loading="lazy">
             <div class="pk-grad"></div>
             <div class="pk-wm">NOA caffé & co</div>
@@ -56,8 +72,8 @@ function renderPicks() {
                 <div class="pk-name">${p.name}</div>
                 <div class="pk-price">${p.price} ₺</div>
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 }
 
 /* ============ BAR ============ */
@@ -102,6 +118,7 @@ function renderMenu() {
         sec.style.transitionDelay = ci * 0.04 + 's';
 
         const cards = cat.items.map((it, ii) => {
+            const idx = storeItem(it, cat);
             const img = it.image
                 ? `<img class="card-img" src="${it.image}" alt="${it.name}" loading="lazy"
                         onerror="this.outerHTML='<div class=card-noimg>${cat.icon}</div>'">`
@@ -110,7 +127,7 @@ function renderMenu() {
             const cls = it.available === false ? ' off' : '';
 
             return `<div class="card${cls}" style="animation-delay:${ci * 0.04 + ii * 0.03}s"
-                         onclick='showItem(${esc(it, cat)})'>
+                         onclick="showItem(${idx})">
                 ${img}
                 <div class="card-body">
                     <div class="card-name">${it.name}</div>
@@ -142,15 +159,19 @@ function renderMenu() {
 }
 
 /* ============ MODAL ============ */
-function showItem(raw) {
-    let d; try { d = JSON.parse(raw); } catch { return; }
+function showItem(idx) {
+    const d = itemStore[idx];
+    if (!d) return;
+
     const v = document.getElementById('modalVisual');
     if (d.image) {
         v.innerHTML = `<img src="${d.image}" alt="${d.name}">`;
         v.style.display = '';
-    } else v.style.display = 'none';
+    } else {
+        v.style.display = 'none';
+    }
 
-    document.getElementById('modalTag').textContent = (d._i || d.catIcon || '') + ' ' + (d._c || d.catName || '');
+    document.getElementById('modalTag').textContent = (d.catIcon || '') + ' ' + (d.catName || '');
     document.getElementById('modalTitle').textContent = d.name;
     document.getElementById('modalDesc').textContent = d.description || '';
     document.getElementById('modalPrice').textContent = d.price + ' ₺';
@@ -174,17 +195,7 @@ function renderFoot() {
     el.innerHTML = h;
 }
 
-/* ============ UTILS ============ */
-function esc(item, cat) {
-    const o = {
-        name: item.name, description: item.description, price: item.price,
-        image: item.image || '',
-        _c: cat ? cat.name : item._c || '', _i: cat ? cat.icon : item._i || '',
-        catName: cat ? cat.name : item._c || '', catIcon: cat ? cat.icon : item._i || ''
-    };
-    return "'" + JSON.stringify(o).replace(/'/g, "\\'") + "'";
-}
-
+/* ============ REVEAL ============ */
 function observe() {
     const io = new IntersectionObserver(es => {
         es.forEach(e => {
