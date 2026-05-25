@@ -9,92 +9,56 @@
   },
   "categories": [
     {
-      "id": "sicak-icecekler",
-      "name": "Sıcak İçecekler",
+      "id": "caylar-sicak-icecekler",
+      "name": "Çaylar & Sıcak İçecekler",
+      "icon": "☕",
+      "banner": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&h=300&fit=crop",
+      "items": [
+        { "id": "cay", "name": "Çay", "price": 40, "description": "Taze demlenmiş Rize çayı", "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&h=400&fit=crop", "available": true },
+        { "id": "klasik-bitki-caylari", "name": "Klasik Bitki Çayları", "price": 120, "description": "Ihlamur, Nane Limon, Yeşil Çay, Papatya, Kış Çayı, Adaçayı", "image": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400&h=400&fit=crop", "available": true }
+      ]
+    },
+    {
+      "id": "soft-icecekler",
+      "name": "Soft İçecekler",
+      "icon": "🥤",
+      "banner": "https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=800&h=300&fit=crop",
+      "items": [
+        { "id": "su", "name": "Su", "price": 25, "description": "", "image": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=400&fit=crop", "available": true },
+        { "id": "soda", "name": "Soda", "price": 50, "description": "", "image": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400&h=400&fit=crop", "available": true },
+        { "id": "meyveli-soda", "name": "Meyveli Soda", "price": 60, "description": "", "image": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=400&fit=crop", "available": true },
+        { "id": "churchill", "name": "Churchill", "price": 100, "description": "", "image": "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400&h=400&fit=crop", "available": true },
+        { "id": "ayran", "name": "Ayran", "price": 80, "description": "", "image": "https://images.unsplash.com/photo-1584278860047-22db9ff82bed?w=400&h=400&fit=crop", "available": true },
+        { "id": "kola", "name": "Kola", "price": 100, "description": "", "image": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400&h=400&fit=crop", "available": true },
+        { "id": "fanta", "name": "Fanta", "price": 100, "description": "", "image": "https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=400&h=400&fit=crop", "available": true },
+        { "id": "gazoz", "name": "Gazoz", "price": 100, "description": "", "image": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400&h=400&fit=crop", "available": true },
+        { "id": "ice-tea", "name": "Ice Tea Çeşitleri", "price": 100, "description": "", "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=400&fit=crop", "available": true }
+      ]
+    },
+    {
+      "id": "klasikler-kahveler",
+      "name": "Klasikler (Kahveler)",
       "icon": "☕",
       "banner": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&h=300&fit=crop",
       "items": [
-        {
-          "id": "espresso",
-          "name": "Espresso",
-          "price": 60,
-          "description": "Klasik İtalyan espresso, yoğun ve aromatik",
-          "image": "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&h=400&fit=crop",
-          "available": true,
-          "popular": false
-        },
-        {
-          "id": "americano",
-          "name": "Americano",
-          "price": 70,
-          "description": "Espresso + sıcak su, yumuşak ve dengeli",
-          "image": "https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "latte",
-          "name": "Latte",
-          "price": 85,
-          "description": "Espresso + buharlanmış süt, kadifemsi doku",
-          "image": "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "cappuccino",
-          "name": "Cappuccino",
-          "price": 85,
-          "description": "Espresso + yoğun süt köpüğü, İtalyan klasiği",
-          "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "mocha",
-          "name": "Mocha",
-          "price": 95,
-          "description": "Espresso + çikolata + süt, tatlı sevenler için",
-          "image": "https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "turk-kahvesi",
-          "name": "Türk Kahvesi",
-          "price": 55,
-          "description": "Geleneksel Türk kahvesi, köpüklü servis",
-          "image": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "sicak-cikolata",
-          "name": "Sıcak Çikolata",
-          "price": 80,
-          "description": "Gerçek Belçika çikolatasından, krema ile",
-          "image": "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "chai-latte",
-          "name": "Chai Latte",
-          "price": 80,
-          "description": "Tarçın, karanfil, zencefil baharatlı çay latte",
-          "image": "https://images.unsplash.com/photo-1557006021-b85faa2bc5e2?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "filtre-kahve",
-          "name": "Filtre Kahve",
-          "price": 60,
-          "description": "Taze çekilmiş özel harman filtre kahve",
-          "image": "https://images.unsplash.com/photo-1559496775-a89f54f5ba41?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "cay",
-          "name": "Çay",
-          "price": 25,
-          "description": "Taze demlenmiş Rize çayı",
-          "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&h=400&fit=crop",
-          "available": true
-        }
+        { "id": "espresso", "name": "Espresso", "price": 120, "description": "", "image": "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "double-espresso", "name": "Double Espresso", "price": 140, "description": "", "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefda?w=400&h=400&fit=crop", "available": true },
+        { "id": "espresso-macchiato", "name": "Espresso Macchiato", "price": 130, "description": "", "image": "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=400&h=400&fit=crop", "available": true },
+        { "id": "turk-kahvesi", "name": "Türk Kahvesi", "price": 130, "description": "", "image": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "dibek-kahvesi", "name": "Dibek Kahvesi", "price": 130, "description": "", "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefda?w=400&h=400&fit=crop", "available": true },
+        { "id": "damla-sakizli-turk-kahvesi", "name": "Damla Sakızlı Türk Kahvesi", "price": 140, "description": "", "image": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=400&fit=crop", "available": true },
+        { "id": "menengic-kahvesi", "name": "Menengiç Kahvesi", "price": 140, "description": "", "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefda?w=400&h=400&fit=crop", "available": true },
+        { "id": "filtre-kahve", "name": "Filtre Kahve", "price": 140, "description": "", "image": "https://images.unsplash.com/photo-1559496775-a89f54f5ba41?w=400&h=400&fit=crop", "available": true },
+        { "id": "americano", "name": "Americano", "price": 160, "description": "", "image": "https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&h=400&fit=crop", "available": true },
+        { "id": "flat-white", "name": "Flat White", "price": 170, "description": "", "image": "https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=400&h=400&fit=crop", "available": true },
+        { "id": "latte", "name": "Latte", "price": 170, "description": "", "image": "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "karamel-latte", "name": "Karamel Latte", "price": 180, "description": "", "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=400&fit=crop", "available": true },
+        { "id": "toffee-nut-latte", "name": "Toffee Nut Latte", "price": 180, "description": "", "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=400&fit=crop", "available": true },
+        { "id": "lotus-latte", "name": "Lotus Latte", "price": 180, "description": "", "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=400&fit=crop", "available": true },
+        { "id": "mocha", "name": "Mocha", "price": 180, "description": "", "image": "https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?w=400&h=400&fit=crop", "available": true },
+        { "id": "white-mocha", "name": "White Mocha", "price": 180, "description": "", "image": "https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?w=400&h=400&fit=crop", "available": true },
+        { "id": "caramel-macchiato", "name": "Caramel Macchiato", "price": 190, "description": "", "image": "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=400&h=400&fit=crop", "available": true },
+        { "id": "affogato", "name": "Affogato", "price": 160, "description": "", "image": "https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?w=400&h=400&fit=crop", "available": true }
       ]
     },
     {
@@ -103,252 +67,102 @@
       "icon": "🧊",
       "banner": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800&h=300&fit=crop",
       "items": [
-        {
-          "id": "ice-latte",
-          "name": "Ice Latte",
-          "price": 90,
-          "description": "Buzlu espresso + soğuk süt, serinletici",
-          "image": "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "ice-americano",
-          "name": "Ice Americano",
-          "price": 80,
-          "description": "Buzlu espresso + soğuk su",
-          "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "ice-mocha",
-          "name": "Ice Mocha",
-          "price": 100,
-          "description": "Buzlu çikolatalı espresso + süt",
-          "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "frappe",
-          "name": "Frappé",
-          "price": 100,
-          "description": "Buz + espresso + süt, karıştırılmış",
-          "image": "https://images.unsplash.com/photo-1461696114087-397271a7aedc?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "limonata",
-          "name": "Ev Yapımı Limonata",
-          "price": 70,
-          "description": "Taze sıkılmış limon + nane yaprakları",
-          "image": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "smoothie-mango",
-          "name": "Mango Smoothie",
-          "price": 90,
-          "description": "Taze mango + yoğurt + bal",
-          "image": "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "smoothie-cilek",
-          "name": "Çilek Smoothie",
-          "price": 90,
-          "description": "Taze çilek + muz + yoğurt",
-          "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "milkshake",
-          "name": "Milkshake",
-          "price": 95,
-          "description": "Çikolata / Vanilya / Çilek - dondurmalı",
-          "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop",
-          "available": true
-        }
+        { "id": "noa-limonata", "name": "NOA El Yapımı Limonata", "price": 160, "description": "", "image": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "noa-brownisa", "name": "NOA Brownisa (Yaban Mersini)", "price": 160, "description": "", "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&h=400&fit=crop", "available": true },
+        { "id": "ice-filtre-coffee", "name": "Ice Filtre Coffee", "price": 150, "description": "", "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&h=400&fit=crop", "available": true },
+        { "id": "ice-americano", "name": "Ice Americano", "price": 170, "description": "", "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&h=400&fit=crop", "available": true },
+        { "id": "ice-latte", "name": "Ice Latte", "price": 180, "description": "", "image": "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop", "available": true },
+        { "id": "ice-mocha", "name": "Ice Mocha", "price": 190, "description": "", "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=400&fit=crop", "available": true },
+        { "id": "ice-karamel-latte", "name": "Ice Karamel Latte", "price": 190, "description": "", "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=400&fit=crop", "available": true },
+        { "id": "ice-white-mocha", "name": "Ice White Mocha", "price": 200, "description": "", "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=400&fit=crop", "available": true },
+        { "id": "frappe", "name": "Frappe", "price": 220, "description": "", "image": "https://images.unsplash.com/photo-1461696114087-397271a7aedc?w=400&h=400&fit=crop", "available": true },
+        { "id": "milkshake", "name": "Milkshake Çeşitleri", "price": 200, "description": "Çilekli / Çikolatalı / Oreolu", "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=400&fit=crop", "available": true },
+        { "id": "frozen", "name": "Frozen Çeşitleri", "price": 190, "description": "Çilek / Orman Meyveli / Mangolu", "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&h=400&fit=crop", "available": true },
+        { "id": "smoothie", "name": "Smoothie", "price": 220, "description": "", "image": "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&h=400&fit=crop", "available": true }
       ]
     },
     {
-      "id": "burgerler",
-      "name": "Burgerler",
+      "id": "ozel-gun-tabagi",
+      "name": "Noa'nın Özel Gün Tabağı",
+      "icon": "⭐",
+      "banner": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=300&fit=crop",
+      "items": [
+        { "id": "ozel-gun-tabagi", "name": "Noa'nın Özel Gün Tabağı", "price": 350, "description": "Kısır, patates salatası, çıtır gül böreği, zeytinyağlı sarma ve nefis ıslak kek ile geleneksel lezzetler bir arada", "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=400&fit=crop", "available": true, "popular": true }
+      ]
+    },
+    {
+      "id": "kahvalti-yumurta",
+      "name": "Kahvaltı & Yumurta",
+      "icon": "🍳",
+      "banner": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&h=300&fit=crop",
+      "items": [
+        { "id": "serpme-kahvalti", "name": "Serpme Kahvaltı", "price": 800, "description": "2 kişilik", "image": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "kahvalti-tabagi", "name": "Kahvaltı Tabağı", "price": 290, "description": "", "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=400&fit=crop", "available": true },
+        { "id": "pisi-tabagi", "name": "Pişi Tabağı", "price": 220, "description": "Peynir, domates, salatalık, zeytin", "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&h=400&fit=crop", "available": true },
+        { "id": "kuymak", "name": "Kuymak", "price": 225, "description": "", "image": "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=400&h=400&fit=crop", "available": true },
+        { "id": "menemen", "name": "Menemen", "price": 220, "description": "", "image": "https://images.unsplash.com/photo-1590412200988-a436970781fa?w=400&h=400&fit=crop", "available": true },
+        { "id": "omlet", "name": "Omlet", "price": 190, "description": "Kaşarlı - Sucuklu", "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=400&fit=crop", "available": true },
+        { "id": "sahanda-yumurta", "name": "Sahanda Yumurta", "price": 180, "description": "", "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=400&fit=crop", "available": true }
+      ]
+    },
+    {
+      "id": "tost-gozleme",
+      "name": "Tost & Gözleme",
+      "icon": "🥪",
+      "banner": "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=800&h=300&fit=crop",
+      "items": [
+        { "id": "karisik-gozleme", "name": "Karışık Gözleme", "price": 250, "description": "Domates, salatalık ve zeytin ile servis edilir", "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=400&fit=crop", "available": true },
+        { "id": "kasarli-gozleme", "name": "Kaşarlı / Sucuklu / Patatesli Gözleme", "price": 225, "description": "Domates, salatalık ve zeytin ile servis edilir", "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=400&fit=crop", "available": true },
+        { "id": "karisik-tost", "name": "Karışık Tost", "price": 190, "description": "Patates kızartması ile servis edilir", "image": "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "kasarli-sucuklu-tost", "name": "Kaşarlı / Sucuklu Tost", "price": 170, "description": "Patates kızartması ile servis edilir", "image": "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=400&h=400&fit=crop", "available": true }
+      ]
+    },
+    {
+      "id": "burger-ana-yemekler",
+      "name": "Burger & Ana Yemekler",
       "icon": "🍔",
       "banner": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&h=300&fit=crop",
       "items": [
-        {
-          "id": "klasik-burger",
-          "name": "Klasik Burger",
-          "price": 180,
-          "description": "150gr dana köfte, taze marul, domates, soğan, özel Noa sos, susamlı brioche ekmeği",
-          "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop",
-          "popular": true,
-          "available": true
-        },
-        {
-          "id": "cheese-burger",
-          "name": "Cheese Burger",
-          "price": 200,
-          "description": "150gr dana köfte, erimiş cheddar, turşu, karamelize soğan, özel sos",
-          "image": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400&h=400&fit=crop",
-          "popular": true,
-          "available": true
-        },
-        {
-          "id": "double-burger",
-          "name": "Double Burger",
-          "price": 250,
-          "description": "2x150gr dana köfte, çift cheddar, özel sos, karamelize soğan",
-          "image": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "tavuk-burger",
-          "name": "Tavuk Burger",
-          "price": 170,
-          "description": "Çıtır pane tavuk göğsü, marul, domates, ranch sos",
-          "image": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "noa-special",
-          "name": "Noa Special Burger",
-          "price": 280,
-          "description": "200gr özel harman köfte, truffle mayo, karamelize soğan, mantar, çift cheddar, füme bacon",
-          "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&h=400&fit=crop",
-          "popular": true,
-          "available": true
-        }
+        { "id": "noa-burger", "name": "NOA Burger", "price": 330, "description": "Patates kızartması ile servis edilir", "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "cheese-burger", "name": "Cheese Burger", "price": 340, "description": "Patates kızartması ile servis edilir", "image": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "crispy-burger", "name": "Crispy Burger", "price": 320, "description": "Patates kızartması ile servis edilir", "image": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=400&fit=crop", "available": true },
+        { "id": "manti-klasik", "name": "Mantı (Klasik)", "price": 280, "description": "", "image": "https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=400&h=400&fit=crop", "available": true },
+        { "id": "citir-manti", "name": "Çıtır Mantı", "price": 290, "description": "", "image": "https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=400&h=400&fit=crop", "available": true },
+        { "id": "noa-tavuk-menu", "name": "NOA Tavuk Menü", "price": 360, "description": "Körili / Kremalı / Soya Soslu seçenekleriyle", "image": "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=400&h=400&fit=crop", "available": true }
       ]
     },
     {
-      "id": "tostlar",
-      "name": "Tost & Sandviçler",
-      "icon": "🥪",
-      "banner": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800&h=300&fit=crop",
-      "items": [
-        {
-          "id": "kasarli-tost",
-          "name": "Kaşarlı Tost",
-          "price": 80,
-          "description": "Bol kaşar peynirli, çıtır ekmekte",
-          "image": "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "karisik-tost",
-          "name": "Karışık Tost",
-          "price": 100,
-          "description": "Kaşar, sucuk, domates, biber, yeşillik",
-          "image": "https://images.unsplash.com/photo-1475090169767-40ed8d18f67d?w=400&h=400&fit=crop",
-          "popular": true,
-          "available": true
-        },
-        {
-          "id": "club-sandvic",
-          "name": "Club Sandviç",
-          "price": 150,
-          "description": "Izgara tavuk, marul, domates, mayo, yumurta, 3 katlı",
-          "image": "https://images.unsplash.com/photo-1567234669003-dce7a7a88821?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "ton-balikli",
-          "name": "Ton Balıklı Sandviç",
-          "price": 140,
-          "description": "Ton balığı salata, mısır, marul, özel mayo",
-          "image": "https://images.unsplash.com/photo-1554433607-66b5efe9d304?w=400&h=400&fit=crop",
-          "available": true
-        }
-      ]
-    },
-    {
-      "id": "tatlilar",
-      "name": "Tatlılar",
-      "icon": "🍰",
-      "banner": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&h=300&fit=crop",
-      "items": [
-        {
-          "id": "cheesecake",
-          "name": "Cheesecake",
-          "price": 110,
-          "description": "New York usulü klasik cheesecake, çilek sos",
-          "image": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=400&fit=crop",
-          "popular": true,
-          "available": true
-        },
-        {
-          "id": "brownie",
-          "name": "Brownie",
-          "price": 90,
-          "description": "Sıcak servis, bitter çikolata, dondurma ile",
-          "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "tiramisu",
-          "name": "Tiramisu",
-          "price": 120,
-          "description": "Orijinal İtalyan tarifi, mascarpone peyniri",
-          "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "cookie",
-          "name": "Cookie",
-          "price": 60,
-          "description": "Taze pişmiş, damla çikolatalı",
-          "image": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "waffle",
-          "name": "Waffle",
-          "price": 130,
-          "description": "Belçika waffle, çikolata sos, taze meyve, dondurma",
-          "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400&h=400&fit=crop",
-          "popular": true,
-          "available": true
-        }
-      ]
-    },
-    {
-      "id": "yan-urunler",
-      "name": "Yan Ürünler",
+      "id": "aperatif-ara-sicaklar",
+      "name": "Aperatif & Ara Sıcaklar",
       "icon": "🍟",
       "banner": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=800&h=300&fit=crop",
       "items": [
-        {
-          "id": "patates-kizartmasi",
-          "name": "Patates Kızartması",
-          "price": 70,
-          "description": "Çıtır dış, yumuşak iç, özel baharat",
-          "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "sogan-halkasi",
-          "name": "Soğan Halkası",
-          "price": 80,
-          "description": "Çıtır kaplamalı, ranch sos ile",
-          "image": "https://images.unsplash.com/photo-1639024471283-03518883512d?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "nugget",
-          "name": "Nugget (8 adet)",
-          "price": 100,
-          "description": "Çıtır tavuk nugget, BBQ & mayo sos",
-          "image": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400&h=400&fit=crop",
-          "available": true
-        },
-        {
-          "id": "patates-wedges",
-          "name": "Patates Wedges",
-          "price": 80,
-          "description": "Elma dilim patates, özel baharat karışımı",
-          "image": "https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=400&h=400&fit=crop",
-          "available": true
-        }
+        { "id": "noa-combo-mix", "name": "NOA Combo Mix", "price": 300, "description": "Patates kızartması, kalem börek, sosis, soğan halkası, kroket", "image": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "crispy-tavuk-patates", "name": "Crispy Tavuk & Patates", "price": 240, "description": "", "image": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400&h=400&fit=crop", "available": true },
+        { "id": "baharatli-patates", "name": "Baharatlı Patates Kızartması", "price": 100, "description": "", "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=400&fit=crop", "available": true },
+        { "id": "gunun-corbasi", "name": "Günün Çorbası", "price": 150, "description": "", "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=400&fit=crop", "available": true }
+      ]
+    },
+    {
+      "id": "salatalar",
+      "name": "Salatalar",
+      "icon": "🥗",
+      "banner": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=300&fit=crop",
+      "items": [
+        { "id": "tavuklu-sezar", "name": "Tavuklu Sezar Salata", "price": 270, "description": "", "image": "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=400&h=400&fit=crop", "available": true },
+        { "id": "citir-tavuklu-salata", "name": "Çıtır Tavuklu Salata", "price": 270, "description": "", "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop", "available": true },
+        { "id": "ton-balikli-salata", "name": "Ton Balıklı Salata", "price": 270, "description": "", "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=400&fit=crop", "available": true }
+      ]
+    },
+    {
+      "id": "tatli-bir-son",
+      "name": "Tatlı Bir Son",
+      "icon": "🍰",
+      "banner": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&h=300&fit=crop",
+      "items": [
+        { "id": "noa-waffle", "name": "NOA Waffle", "price": 280, "description": "", "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "spoonful", "name": "Spoonful", "price": 210, "description": "", "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=400&fit=crop", "available": true },
+        { "id": "ev-yapimi-magnolia", "name": "Ev Yapımı Magnolia", "price": 200, "description": "Çilekli / Muzlu", "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop", "available": true }
       ]
     }
   ]
