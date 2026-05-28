@@ -15,6 +15,7 @@
       "banner": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&h=300&fit=crop",
       "items": [
         { "id": "cay", "name": "Çay", "price": 40, "description": "Taze demlenmiş Rize çayı", "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&h=400&fit=crop", "available": true },
+        { "id": "fincan-cay", "name": "Fincan Çay", "price": 60, "description": "", "image": "https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?w=400&h=400&fit=crop", "available": true },
         { "id": "klasik-bitki-caylari", "name": "Klasik Bitki Çayları", "price": 120, "description": "Ihlamur, Nane Limon, Yeşil Çay, Papatya, Kış Çayı, Adaçayı", "image": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400&h=400&fit=crop", "available": true }
       ]
     },
