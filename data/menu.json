@@ -71,6 +71,7 @@
       "items": [
         { "id": "noa-limonata", "name": "NOA El Yapımı Limonata", "price": 160, "description": "", "image": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=400&fit=crop", "available": true, "popular": true },
         { "id": "noa-brownisa", "name": "NOA Brownisa (Yaban Mersini)", "price": 160, "description": "", "image": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=400&fit=crop", "available": true },
+        { "id": "noa-blueberry", "name": "Noa BlueBerry", "price": 200, "description": "", "image": "", "available": true },
         { "id": "ice-filtre-coffee", "name": "Ice Filtre Coffee", "price": 150, "description": "", "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&h=400&fit=crop", "available": true },
         { "id": "ice-americano", "name": "Ice Americano", "price": 170, "description": "", "image": "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&h=400&fit=crop", "available": true },
         { "id": "ice-latte", "name": "Ice Latte", "price": 180, "description": "", "image": "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=400&fit=crop", "available": true },
