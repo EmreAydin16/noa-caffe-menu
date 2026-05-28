@@ -46,6 +46,7 @@
         { "id": "double-espresso", "name": "Double Espresso", "price": 140, "description": "", "image": "https://images.unsplash.com/photo-1459755486867-b55449bb39ff?w=400&h=400&fit=crop", "available": true },
         { "id": "espresso-macchiato", "name": "Espresso Macchiato", "price": 130, "description": "", "image": "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=400&h=400&fit=crop", "available": true },
         { "id": "turk-kahvesi", "name": "Türk Kahvesi", "price": 130, "description": "", "image": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=400&fit=crop", "available": true, "popular": true },
+        { "id": "duble-turk-kahvesi", "name": "Duble Türk Kahvesi", "price": 190, "description": "", "image": "https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=400&h=400&fit=crop", "available": true },
         { "id": "dibek-kahvesi", "name": "Dibek Kahvesi", "price": 130, "description": "", "image": "https://images.unsplash.com/photo-1521302200778-33500795e128?w=400&h=400&fit=crop", "available": true },
         { "id": "damla-sakizli-turk-kahvesi", "name": "Damla Sakızlı Türk Kahvesi", "price": 140, "description": "", "image": "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?w=400&h=400&fit=crop", "available": true },
         { "id": "menengic-kahvesi", "name": "Menengiç Kahvesi", "price": 140, "description": "", "image": "https://images.unsplash.com/photo-1497636577773-f1231844b336?w=400&h=400&fit=crop", "available": true },
