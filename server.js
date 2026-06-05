@@ -43,7 +43,7 @@ async function ensureSupabaseBucket() {
     const res = await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
         method: 'POST',
         headers: supabaseHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ id: SUPABASE_BUCKET, public: false })
+        body: JSON.stringify({ name: SUPABASE_BUCKET, public: false })
     });
     if (res.ok || res.status === 409) return;
     const err = await res.text();

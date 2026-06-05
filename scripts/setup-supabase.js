@@ -32,7 +32,7 @@ async function main() {
     const bucketRes = await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
         method: 'POST',
         headers: headers({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ id: BUCKET, public: false })
+        body: JSON.stringify({ name: BUCKET, public: false })
     });
     if (!bucketRes.ok && bucketRes.status !== 409) {
         throw new Error(await bucketRes.text());
