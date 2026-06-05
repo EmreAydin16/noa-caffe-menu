@@ -45,8 +45,9 @@ async function ensureSupabaseBucket() {
         headers: supabaseHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ name: SUPABASE_BUCKET, public: false })
     });
-    if (res.ok || res.status === 409) return;
+    if (res.ok) return;
     const err = await res.text();
+    if (err.includes('already exists') || err.includes('Duplicate')) return;
     throw new Error(`Supabase bucket hatasi: ${res.status} ${err}`);
 }
 

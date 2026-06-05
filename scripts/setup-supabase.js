@@ -34,8 +34,11 @@ async function main() {
         headers: headers({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ name: BUCKET, public: false })
     });
-    if (!bucketRes.ok && bucketRes.status !== 409) {
-        throw new Error(await bucketRes.text());
+    if (!bucketRes.ok) {
+        const err = await bucketRes.text();
+        if (!err.includes('already exists') && !err.includes('Duplicate')) {
+            throw new Error(err);
+        }
     }
     console.log('   Bucket hazir');
 
