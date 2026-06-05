@@ -6,6 +6,10 @@ const PORT = process.env.PORT || 3000;
 const PUBLIC_URL = process.env.PUBLIC_URL || 'https://noa-caffe-menu.onrender.com';
 const DATA_FILE = path.join(__dirname, 'data', 'menu.json');
 
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_KEY);
+
 const MIME_TYPES = {
     '.html': 'text/html; charset=utf-8',
     '.css': 'text/css; charset=utf-8',
@@ -17,12 +21,70 @@ const MIME_TYPES = {
     '.ico': 'image/x-icon'
 };
 
-function readMenu() {
+function readMenuFromFile() {
     return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
 }
 
-function writeMenu(data) {
+function writeMenuToFile(data) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+}
+
+function supabaseHeaders(extra = {}) {
+    return {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        ...extra
+    };
+}
+
+async function readMenuFromSupabase() {
+    const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/menu_store?id=eq.main&select=data`,
+        { headers: supabaseHeaders() }
+    );
+
+    if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Supabase okuma hatası: ${res.status} ${err}`);
+    }
+
+    const rows = await res.json();
+    if (rows.length && rows[0].data) return rows[0].data;
+
+    const seed = readMenuFromFile();
+    await writeMenuToSupabase(seed);
+    console.log('  📦 Supabase bos - menu.json ile dolduruldu');
+    return seed;
+}
+
+async function writeMenuToSupabase(data) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_store`, {
+        method: 'POST',
+        headers: supabaseHeaders({
+            'Content-Type': 'application/json',
+            Prefer: 'resolution=merge-duplicates,return=minimal'
+        }),
+        body: JSON.stringify({
+            id: 'main',
+            data,
+            updated_at: new Date().toISOString()
+        })
+    });
+
+    if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Supabase yazma hatasi: ${res.status} ${err}`);
+    }
+}
+
+async function readMenu() {
+    if (USE_SUPABASE) return readMenuFromSupabase();
+    return readMenuFromFile();
+}
+
+async function writeMenu(data) {
+    if (USE_SUPABASE) return writeMenuToSupabase(data);
+    writeMenuToFile(data);
 }
 
 function slugify(text) {
@@ -70,19 +132,16 @@ const server = http.createServer(async (req, res) => {
     const method = req.method;
 
     try {
-        // ===== API ROUTES =====
-
         if (pathname === '/api/menu' && method === 'GET') {
-            return sendJSON(res, readMenu());
+            return sendJSON(res, await readMenu());
         }
 
-        // Add item to category
         if (pathname.match(/^\/api\/menu\/item\/([^/]+)$/) && method === 'POST') {
             const catId = pathname.split('/')[4];
             const body = await parseBody(req);
-            const data = readMenu();
+            const data = await readMenu();
             const cat = data.categories.find(c => c.id === catId);
-            if (!cat) return sendJSON(res, { error: 'Kategori bulunamadı' }, 404);
+            if (!cat) return sendJSON(res, { error: 'Kategori bulunamadi' }, 404);
 
             const newItem = {
                 id: slugify(body.name) + '-' + Date.now().toString(36),
@@ -94,22 +153,21 @@ const server = http.createServer(async (req, res) => {
                 available: body.available !== undefined ? body.available : true
             };
             cat.items.push(newItem);
-            writeMenu(data);
+            await writeMenu(data);
             return sendJSON(res, newItem);
         }
 
-        // Update item
         if (pathname.match(/^\/api\/menu\/item\/([^/]+)\/([^/]+)$/) && method === 'PUT') {
             const parts = pathname.split('/');
             const catId = parts[4];
             const itemId = parts[5];
             const body = await parseBody(req);
-            const data = readMenu();
+            const data = await readMenu();
             const cat = data.categories.find(c => c.id === catId);
-            if (!cat) return sendJSON(res, { error: 'Kategori bulunamadı' }, 404);
+            if (!cat) return sendJSON(res, { error: 'Kategori bulunamadi' }, 404);
 
             const itemIndex = cat.items.findIndex(i => i.id === itemId);
-            if (itemIndex === -1) return sendJSON(res, { error: 'Ürün bulunamadı' }, 404);
+            if (itemIndex === -1) return sendJSON(res, { error: 'Urun bulunamadi' }, 404);
 
             const item = cat.items[itemIndex];
             if (body.name !== undefined) item.name = body.name;
@@ -127,28 +185,26 @@ const server = http.createServer(async (req, res) => {
                 }
             }
 
-            writeMenu(data);
+            await writeMenu(data);
             return sendJSON(res, item);
         }
 
-        // Delete item
         if (pathname.match(/^\/api\/menu\/item\/([^/]+)\/([^/]+)$/) && method === 'DELETE') {
             const parts = pathname.split('/');
             const catId = parts[4];
             const itemId = parts[5];
-            const data = readMenu();
+            const data = await readMenu();
             const cat = data.categories.find(c => c.id === catId);
-            if (!cat) return sendJSON(res, { error: 'Kategori bulunamadı' }, 404);
+            if (!cat) return sendJSON(res, { error: 'Kategori bulunamadi' }, 404);
 
             cat.items = cat.items.filter(i => i.id !== itemId);
-            writeMenu(data);
+            await writeMenu(data);
             return sendJSON(res, { success: true });
         }
 
-        // Add category
         if (pathname === '/api/menu/category' && method === 'POST') {
             const body = await parseBody(req);
-            const data = readMenu();
+            const data = await readMenu();
             const newCat = {
                 id: slugify(body.name) + '-' + Date.now().toString(36),
                 name: body.name,
@@ -156,50 +212,44 @@ const server = http.createServer(async (req, res) => {
                 items: []
             };
             data.categories.push(newCat);
-            writeMenu(data);
+            await writeMenu(data);
             return sendJSON(res, newCat);
         }
 
-        // Update category
         if (pathname.match(/^\/api\/menu\/category\/([^/]+)$/) && method === 'PUT') {
             const catId = pathname.split('/')[4];
             const body = await parseBody(req);
-            const data = readMenu();
+            const data = await readMenu();
             const cat = data.categories.find(c => c.id === catId);
-            if (!cat) return sendJSON(res, { error: 'Kategori bulunamadı' }, 404);
+            if (!cat) return sendJSON(res, { error: 'Kategori bulunamadi' }, 404);
 
             if (body.name) cat.name = body.name;
             if (body.icon) cat.icon = body.icon;
-            writeMenu(data);
+            await writeMenu(data);
             return sendJSON(res, cat);
         }
 
-        // Delete category
         if (pathname.match(/^\/api\/menu\/category\/([^/]+)$/) && method === 'DELETE') {
             const catId = pathname.split('/')[4];
-            const data = readMenu();
+            const data = await readMenu();
             data.categories = data.categories.filter(c => c.id !== catId);
-            writeMenu(data);
+            await writeMenu(data);
             return sendJSON(res, { success: true });
         }
 
-        // Settings
         if (pathname === '/api/settings' && method === 'PUT') {
             const body = await parseBody(req);
-            const data = readMenu();
+            const data = await readMenu();
             data.restaurant = { ...data.restaurant, ...body };
-            writeMenu(data);
+            await writeMenu(data);
             return sendJSON(res, data.restaurant);
         }
 
-        // QR URL - uses external API
         if (pathname === '/api/qr-url' && method === 'GET') {
             const menuUrl = PUBLIC_URL || `http://${req.headers.host}`;
             const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(menuUrl)}&color=2c1810&bgcolor=ffffff&margin=10`;
             return sendJSON(res, { url: menuUrl, qrApiUrl });
         }
-
-        // ===== STATIC FILES =====
 
         if (pathname === '/') {
             return serveStatic(res, path.join(__dirname, 'public', 'index.html'));
@@ -219,16 +269,17 @@ const server = http.createServer(async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        sendJSON(res, { error: 'Sunucu hatası' }, 500);
+        sendJSON(res, { error: 'Sunucu hatasi' }, 500);
     }
 });
 
 server.listen(PORT, () => {
     console.log('');
-    console.log('  ☕ Noa Caffe & Co - QR Menü Sistemi');
-    console.log('  ───────────────────────────────────');
-    console.log(`  🌐 Menü:    http://localhost:${PORT}`);
-    console.log(`  🔧 Admin:   http://localhost:${PORT}/admin`);
-    console.log('  ───────────────────────────────────');
+    console.log('  Noa Caffe & Co - QR Menu Sistemi');
+    console.log('  -----------------------------------');
+    console.log(`  Menu:    http://localhost:${PORT}`);
+    console.log(`  Admin:   http://localhost:${PORT}/admin`);
+    console.log(`  Depo:    ${USE_SUPABASE ? 'Supabase (kalici)' : 'Dosya (gecici)'}`);
+    console.log('  -----------------------------------');
     console.log('');
 });
