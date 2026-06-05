@@ -9,6 +9,8 @@ const DATA_FILE = path.join(__dirname, 'data', 'menu.json');
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_KEY);
+const SUPABASE_BUCKET = 'noa-menu';
+const SUPABASE_FILE = 'menu.json';
 
 const MIME_TYPES = {
     '.html': 'text/html; charset=utf-8',
@@ -37,39 +39,54 @@ function supabaseHeaders(extra = {}) {
     };
 }
 
+async function ensureSupabaseBucket() {
+    const res = await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
+        method: 'POST',
+        headers: supabaseHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ id: SUPABASE_BUCKET, public: false })
+    });
+    if (res.ok || res.status === 409) return;
+    const err = await res.text();
+    throw new Error(`Supabase bucket hatasi: ${res.status} ${err}`);
+}
+
 async function readMenuFromSupabase() {
+    await ensureSupabaseBucket();
+
     const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/menu_store?id=eq.main&select=data`,
+        `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${SUPABASE_FILE}`,
         { headers: supabaseHeaders() }
     );
 
-    if (!res.ok) {
-        const err = await res.text();
-        throw new Error(`Supabase okuma hatası: ${res.status} ${err}`);
+    if (res.status === 404) {
+        const seed = readMenuFromFile();
+        await writeMenuToSupabase(seed);
+        console.log('  Supabase bos - menu.json ile dolduruldu');
+        return seed;
     }
 
-    const rows = await res.json();
-    if (rows.length && rows[0].data) return rows[0].data;
+    if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Supabase okuma hatasi: ${res.status} ${err}`);
+    }
 
-    const seed = readMenuFromFile();
-    await writeMenuToSupabase(seed);
-    console.log('  📦 Supabase bos - menu.json ile dolduruldu');
-    return seed;
+    return res.json();
 }
 
 async function writeMenuToSupabase(data) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/menu_store`, {
-        method: 'POST',
-        headers: supabaseHeaders({
-            'Content-Type': 'application/json',
-            Prefer: 'resolution=merge-duplicates,return=minimal'
-        }),
-        body: JSON.stringify({
-            id: 'main',
-            data,
-            updated_at: new Date().toISOString()
-        })
-    });
+    await ensureSupabaseBucket();
+
+    const res = await fetch(
+        `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${SUPABASE_FILE}`,
+        {
+            method: 'POST',
+            headers: supabaseHeaders({
+                'Content-Type': 'application/json',
+                'x-upsert': 'true'
+            }),
+            body: JSON.stringify(data, null, 2)
+        }
+    );
 
     if (!res.ok) {
         const err = await res.text();
