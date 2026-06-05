@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: noa-caffe-menu
+    runtime: node
+    buildCommand: echo "no build"
+    startCommand: node server.js
+    envVars:
+      - key: PUBLIC_URL
+        value: https://noa-caffe-menu.onrender.com
+      - key: SUPABASE_URL
+        value: https://pyxcgtsbjyvifpafqdjv.supabase.co

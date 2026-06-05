@@ -6,8 +6,8 @@ const PORT = process.env.PORT || 3000;
 const PUBLIC_URL = process.env.PUBLIC_URL || 'https://noa-caffe-menu.onrender.com';
 const DATA_FILE = path.join(__dirname, 'data', 'menu.json');
 
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://pyxcgtsbjyvifpafqdjv.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5eGNndHNianl2aWZwYWZxZGp2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDY2NTY4MiwiZXhwIjoyMDk2MjQxNjgyfQ.zOuy1xKsUabkwSMpDtae3OIkeJjIxk3I9nZDYJWWHNA';
 const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_KEY);
 const SUPABASE_BUCKET = 'noa-menu';
 const SUPABASE_FILE = 'menu.json';
