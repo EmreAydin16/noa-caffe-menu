@@ -6,35 +6,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const r = await fetch('/api/menu');
         D = await r.json();
-        renderPicks();
-        renderBar();
+        renderTop();
+        renderTabs();
         renderMenu();
-        renderFoot();
         document.getElementById('loader').remove();
-        observe();
     } catch {
         document.getElementById('loader').innerHTML =
-            '<p style="color:#a33;font-size:.85rem">Menü yüklenemedi.</p>';
+            '<p style="color:#a33;font-size:.85rem;text-align:center">Menü yüklenemedi.</p>';
     }
 });
 
 function wire() {
-    document.getElementById('heroBtn').onclick = () =>
-        (document.getElementById('picks') || document.getElementById('main'))
-            .scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('fab').onclick = () =>
+        scrollTo({ top: 0, behavior: 'smooth' });
 
-    const fab = document.getElementById('fab');
-    fab.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
     addEventListener('scroll', () => {
-        fab.classList.toggle('show', scrollY > 600);
-        document.getElementById('bar').classList.toggle('shd', scrollY > 200);
-    }, { passive: true });
-
-    const sheet = document.querySelector('.modal-sheet');
-    let y0 = 0;
-    sheet.addEventListener('touchstart', e => y0 = e.touches[0].clientY, { passive: true });
-    sheet.addEventListener('touchmove', e => {
-        if (e.touches[0].clientY - y0 > 80) closeModal();
+        document.getElementById('fab').classList.toggle('show', scrollY > 400);
     }, { passive: true });
 }
 
@@ -51,36 +38,17 @@ function storeItem(item, cat) {
     return idx;
 }
 
-/* ============ PICKS ============ */
-function renderPicks() {
-    const el = document.getElementById('picksGrid');
-    const pops = [];
-    D.categories.forEach(c => c.items.forEach(i => {
-        if (i.popular && i.available && i.image) pops.push({ ...i, _c: c.name, _i: c.icon });
-    }));
-    if (!pops.length) { document.getElementById('picks').remove(); return; }
-
-    el.innerHTML = pops.map(p => {
-        const idx = storeItem(p, null);
-        return `
-        <div class="pk" onclick="showItem(${idx})">
-            <img src="${p.image}" alt="${p.name}" loading="lazy">
-            <div class="pk-grad"></div>
-            <div class="pk-wm">NOA caffé & co</div>
-            <div class="pk-body">
-                <div class="pk-cat">${p._i} ${p._c}</div>
-                <div class="pk-name">${p.name}</div>
-                <div class="pk-price">${p.price} ₺</div>
-            </div>
-        </div>`;
-    }).join('');
+function renderTop() {
+    const r = D.restaurant;
+    if (!r) return;
+    const el = document.getElementById('topLoc');
+    if (r.address) el.textContent = r.address;
 }
 
-/* ============ BAR ============ */
-function renderBar() {
-    const el = document.getElementById('barScroll');
+function renderTabs() {
+    const el = document.getElementById('tabsScroll');
     el.innerHTML = D.categories.map(c =>
-        `<button class="pill" data-id="${c.id}" onclick="go('${c.id}')">${c.icon} ${c.name}</button>`
+        `<button class="tab" data-id="${c.id}" onclick="go('${c.id}')">${c.icon} ${c.name}</button>`
     ).join('');
     spy();
 }
@@ -88,90 +56,84 @@ function renderBar() {
 function go(id) {
     const s = document.getElementById('s-' + id);
     if (!s) return;
-    scrollTo({ top: s.offsetTop - 60, behavior: 'smooth' });
+    scrollTo({ top: s.offsetTop - 52, behavior: 'smooth' });
 }
 
 function spy() {
-    const pills = document.querySelectorAll('.pill');
+    const tabs = document.querySelectorAll('.tab');
     const io = new IntersectionObserver(es => {
         es.forEach(e => {
             if (!e.isIntersecting) return;
             const id = e.target.id.replace('s-', '');
-            pills.forEach(p => p.classList.toggle('on', p.dataset.id === id));
-            document.querySelector(`.pill[data-id="${id}"]`)
+            tabs.forEach(t => t.classList.toggle('on', t.dataset.id === id));
+            document.querySelector(`.tab[data-id="${id}"]`)
                 ?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         });
-    }, { rootMargin: '-70px 0px -60% 0px', threshold: 0.05 });
+    }, { rootMargin: '-60px 0px -65% 0px', threshold: 0.05 });
+
     D.categories.forEach(c => {
         const s = document.getElementById('s-' + c.id);
         if (s) io.observe(s);
     });
 }
 
-/* ============ MENU ============ */
 function renderMenu() {
     const box = document.getElementById('menuInner');
-    D.categories.forEach((cat, ci) => {
-        const sec = document.createElement('section');
-        sec.className = 'cat-sec rv';
-        sec.id = 's-' + cat.id;
-        sec.style.transitionDelay = ci * 0.04 + 's';
 
-        const cards = cat.items.map((it, ii) => {
+    D.categories.forEach(cat => {
+        const block = document.createElement('section');
+        block.className = 'cat-block';
+        block.id = 's-' + cat.id;
+
+        const available = cat.items.filter(i => i.available !== false);
+        if (!available.length) return;
+
+        const rows = available.map(it => {
             const idx = storeItem(it, cat);
-            const img = it.image
-                ? `<img class="card-img" src="${it.image}" alt="${it.name}" loading="lazy"
-                        onerror="this.outerHTML='<div class=card-noimg>${cat.icon}</div>'">`
-                : `<div class="card-noimg">${cat.icon}</div>`;
-            const badge = it.popular ? `<span class="card-badge">Hit</span>` : '';
-            const cls = it.available === false ? ' off' : '';
+            const thumb = it.image
+                ? `<img class="item-thumb" src="${it.image}" alt="" loading="lazy" onerror="this.remove()">`
+                : '';
+            const desc = it.description
+                ? `<div class="item-desc">${it.description}</div>` : '';
+            const badge = it.popular ? `<span class="item-badge">Popüler</span>` : '';
 
-            return `<div class="card${cls}" style="animation-delay:${ci * 0.04 + ii * 0.03}s"
-                         onclick="showItem(${idx})">
-                ${img}
-                <div class="card-body">
-                    <div class="card-name">${it.name}</div>
-                    <div class="card-desc">${it.description || ''}</div>
-                    <div class="card-foot">
-                        <span class="card-price">${it.price} ₺</span>
-                        ${badge}
+            return `<div class="item" onclick="showItem(${idx})">
+                ${thumb}
+                <div class="item-body">
+                    <div class="item-row">
+                        <span class="item-name">${it.name}</span>
+                        <span class="item-price">${it.price} ₺</span>
                     </div>
+                    ${desc}
+                    ${badge}
                 </div>
             </div>`;
         }).join('');
 
-        sec.innerHTML = `
-            <div class="cat-banner">
-                <img src="${cat.banner || ''}" alt="${cat.name}" loading="lazy"
-                     onerror="this.parentElement.style.background='linear-gradient(135deg,var(--espresso),var(--brown))'">
-                <div class="cat-banner-dim">
-                    <span class="cat-banner-icon">${cat.icon}</span>
-                    <div class="cat-banner-text">
-                        <h2>${cat.name}</h2>
-                        <span>${cat.items.length} çeşit</span>
-                    </div>
-                </div>
+        block.innerHTML = `
+            <div class="cat-head">
+                <h2>${cat.icon} ${cat.name} <span>(${available.length})</span></h2>
             </div>
-            <div class="grid">${cards}</div>
+            <div class="cat-list">${rows}</div>
         `;
-        box.appendChild(sec);
+        box.appendChild(block);
     });
 }
 
-/* ============ MODAL ============ */
 function showItem(idx) {
     const d = itemStore[idx];
     if (!d) return;
 
-    const v = document.getElementById('modalVisual');
+    const imgEl = document.getElementById('modalImg');
     if (d.image) {
-        v.innerHTML = `<img src="${d.image}" alt="${d.name}">`;
-        v.style.display = '';
+        imgEl.className = 'modal-img has-img';
+        imgEl.innerHTML = `<img src="${d.image}" alt="${d.name}" onerror="this.parentElement.className='modal-img';this.parentElement.innerHTML=''">`;
     } else {
-        v.style.display = 'none';
+        imgEl.className = 'modal-img';
+        imgEl.innerHTML = '';
     }
 
-    document.getElementById('modalTag').textContent = (d.catIcon || '') + ' ' + (d.catName || '');
+    document.getElementById('modalCat').textContent = (d.catIcon || '') + ' ' + (d.catName || '');
     document.getElementById('modalTitle').textContent = d.name;
     document.getElementById('modalDesc').textContent = d.description || '';
     document.getElementById('modalPrice').textContent = d.price + ' ₺';
@@ -183,24 +145,5 @@ function closeModal() {
     document.getElementById('modal').classList.remove('open');
     document.body.style.overflow = '';
 }
+
 addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-/* ============ FOOTER ============ */
-function renderFoot() {
-    const r = D.restaurant; if (!r) return;
-    const el = document.getElementById('footMid');
-    let h = `<span>${r.address || 'Cumhuriyet Caddesi, Bursa'}</span>`;
-    if (r.phone) h += `<a href="tel:${r.phone}">${r.phone}</a>`;
-    if (r.instagram) h += `<a href="https://instagram.com/${r.instagram}" target="_blank">@${r.instagram}</a>`;
-    el.innerHTML = h;
-}
-
-/* ============ REVEAL ============ */
-function observe() {
-    const io = new IntersectionObserver(es => {
-        es.forEach(e => {
-            if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); }
-        });
-    }, { rootMargin: '0px 0px -30px 0px', threshold: 0.08 });
-    document.querySelectorAll('.rv').forEach(el => io.observe(el));
-}
