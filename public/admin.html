@@ -124,6 +124,13 @@
                         <label>Açıklama</label>
                         <input type="text" id="settingDescription" class="input" value="Kahve & Fast Food">
                     </div>
+                    <div class="form-divider">Menü Görselleri</div>
+                    <div class="form-group">
+                        <label>Kapak Fotoğrafı URL</label>
+                        <input type="url" id="settingCover" class="input" placeholder="https://... (menü açılış ekranı)">
+                        <p class="form-hint">Müşteri menüsünün ilk ekranındaki tam ekran kapak görseli. Boş bırakılırsa logo kullanılır.</p>
+                        <div class="img-preview" id="coverPreview"></div>
+                    </div>
                     <button class="btn btn-primary" onclick="saveSettings()">Ayarları Kaydet</button>
                 </div>
             </div>

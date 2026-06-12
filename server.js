@@ -227,6 +227,7 @@ const server = http.createServer(async (req, res) => {
                 id: slugify(body.name) + '-' + Date.now().toString(36),
                 name: body.name,
                 icon: body.icon || '📋',
+                banner: body.banner || '',
                 items: []
             };
             data.categories.push(newCat);
@@ -241,8 +242,9 @@ const server = http.createServer(async (req, res) => {
             const cat = data.categories.find(c => c.id === catId);
             if (!cat) return sendJSON(res, { error: 'Kategori bulunamadi' }, 404);
 
-            if (body.name) cat.name = body.name;
-            if (body.icon) cat.icon = body.icon;
+            if (body.name !== undefined) cat.name = body.name;
+            if (body.icon !== undefined) cat.icon = body.icon;
+            if (body.banner !== undefined) cat.banner = body.banner;
             await writeMenu(data);
             return sendJSON(res, cat);
         }

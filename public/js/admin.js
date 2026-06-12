@@ -239,8 +239,14 @@ async function toggleAvailability(catId, itemId) {
 
 function renderCategoriesGrid() {
     const grid = document.getElementById('categoriesGrid');
-    grid.innerHTML = menuData.categories.map(cat => `
+    grid.innerHTML = menuData.categories.map(cat => {
+        const bannerHtml = cat.banner
+            ? `<img class="category-card-banner" src="${cat.banner}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'category-card-banner empty',textContent:'Kapak fotoğrafı yok'}))">`
+            : `<div class="category-card-banner empty">Kapak fotoğrafı yok</div>`;
+
+        return `
         <div class="category-card">
+            ${bannerHtml}
             <div class="category-card-header">
                 <div class="category-card-icon">${cat.icon}</div>
                 <div>
@@ -253,7 +259,7 @@ function renderCategoriesGrid() {
                 <button class="btn btn-sm btn-danger" onclick="deleteCategory('${cat.id}')">🗑️ Sil</button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 function openAddCategoryModal() {
@@ -267,8 +273,15 @@ function openAddCategoryModal() {
             <label>İkon (emoji)</label>
             <input type="text" id="catIcon" class="input" placeholder="Ör: 🥐" maxlength="4">
         </div>
+        <div class="form-group">
+            <label>Kapak Fotoğrafı URL</label>
+            <input type="url" id="catBanner" class="input" placeholder="https://... (kategori kartı görseli)">
+            <p class="form-hint">Menüde kategori grid'inde görünen kare kapak fotoğrafı.</p>
+            <div class="img-preview banner-preview" id="catBannerPreview"></div>
+        </div>
         <button class="btn btn-primary" onclick="saveCategory()">Kategori Ekle</button>
     `;
+    bindImagePreview('catBanner', 'catBannerPreview');
     openModal();
 }
 
@@ -284,14 +297,23 @@ function openEditCategoryModal(catId) {
             <label>İkon (emoji)</label>
             <input type="text" id="catIcon" class="input" value="${cat.icon}" maxlength="4">
         </div>
+        <div class="form-group">
+            <label>Kapak Fotoğrafı URL</label>
+            <input type="url" id="catBanner" class="input" value="${cat.banner || ''}" placeholder="https://...">
+            <p class="form-hint">Boş bırakırsanız sadece ikon görünür.</p>
+            <div class="img-preview banner-preview" id="catBannerPreview"></div>
+        </div>
         <button class="btn btn-primary" onclick="updateCategory('${catId}')">Kaydet</button>
     `;
+    bindImagePreview('catBanner', 'catBannerPreview');
+    updateImagePreview('catBanner', 'catBannerPreview');
     openModal();
 }
 
 async function saveCategory() {
     const name = document.getElementById('catName').value.trim();
     const icon = document.getElementById('catIcon').value.trim() || '📋';
+    const banner = document.getElementById('catBanner').value.trim();
 
     if (!name) { showToast('Kategori adı zorunludur!', 'error'); return; }
 
@@ -299,7 +321,7 @@ async function saveCategory() {
         const res = await fetch('/api/menu/category', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, icon })
+            body: JSON.stringify({ name, icon, banner })
         });
         if (!res.ok) throw new Error();
         showToast('Kategori eklendi!');
@@ -313,6 +335,7 @@ async function saveCategory() {
 async function updateCategory(catId) {
     const name = document.getElementById('catName').value.trim();
     const icon = document.getElementById('catIcon').value.trim();
+    const banner = document.getElementById('catBanner').value.trim();
 
     if (!name) { showToast('Kategori adı zorunludur!', 'error'); return; }
 
@@ -320,7 +343,7 @@ async function updateCategory(catId) {
         const res = await fetch(`/api/menu/category/${catId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, icon })
+            body: JSON.stringify({ name, icon, banner })
         });
         if (!res.ok) throw new Error();
         showToast('Kategori güncellendi!');
@@ -354,6 +377,9 @@ function populateSettings() {
     if (r.phone) document.getElementById('settingPhone').value = r.phone;
     if (r.instagram) document.getElementById('settingInstagram').value = r.instagram;
     if (r.description) document.getElementById('settingDescription').value = r.description;
+    if (r.cover) document.getElementById('settingCover').value = r.cover;
+    updateImagePreview('settingCover', 'coverPreview');
+    bindImagePreview('settingCover', 'coverPreview');
 }
 
 async function saveSettings() {
@@ -362,7 +388,8 @@ async function saveSettings() {
         address: document.getElementById('settingAddress').value.trim(),
         phone: document.getElementById('settingPhone').value.trim(),
         instagram: document.getElementById('settingInstagram').value.trim(),
-        description: document.getElementById('settingDescription').value.trim()
+        description: document.getElementById('settingDescription').value.trim(),
+        cover: document.getElementById('settingCover').value.trim()
     };
 
     try {
@@ -377,6 +404,24 @@ async function saveSettings() {
     } catch (err) {
         showToast('Kaydetme başarısız!', 'error');
     }
+}
+
+// ========== IMAGE PREVIEW ==========
+
+function updateImagePreview(inputId, previewId) {
+    const url = document.getElementById(inputId)?.value.trim();
+    const box = document.getElementById(previewId);
+    if (!box) return;
+    box.innerHTML = url
+        ? `<img src="${url}" alt="" onerror="this.parentElement.innerHTML='<span class=form-hint>Görsel yüklenemedi, URL kontrol edin.</span>'">`
+        : '';
+}
+
+function bindImagePreview(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    if (!input || input.dataset.previewBound) return;
+    input.dataset.previewBound = '1';
+    input.addEventListener('input', () => updateImagePreview(inputId, previewId));
 }
 
 // ========== QR CODE ==========

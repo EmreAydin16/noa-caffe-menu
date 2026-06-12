@@ -372,6 +372,60 @@ body {
     border-top: 1px solid var(--border);
 }
 
+.form-divider {
+    margin: 24px 0 16px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.form-hint {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.img-preview {
+    margin-top: 10px;
+    min-height: 0;
+}
+.img-preview img {
+    width: 100%;
+    max-width: 320px;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+.img-preview.banner-preview img {
+    max-width: 160px;
+    max-height: 160px;
+    aspect-ratio: 1;
+}
+
+.category-card-banner {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: #f5f0e8;
+}
+
+.category-card-banner.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    border: 1px dashed var(--border);
+}
+
 /* ========== SETTINGS ========== */
 .settings-form {
     background: var(--bg-card);
