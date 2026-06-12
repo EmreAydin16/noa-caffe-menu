@@ -1,28 +1,136 @@
 let D;
+let currentCat = null;
 const itemStore = [];
+
+const pages = {
+    cover: document.getElementById('pageCover'),
+    cats: document.getElementById('pageCats'),
+    items: document.getElementById('pageItems'),
+    detail: document.getElementById('pageDetail')
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
     wire();
     try {
         const r = await fetch('/api/menu');
         D = await r.json();
-        renderTop();
-        renderTabs();
-        renderMenu();
-        document.getElementById('loader').remove();
+        renderCover();
+        renderCategories();
+        document.getElementById('loader').classList.add('done');
     } catch {
         document.getElementById('loader').innerHTML =
-            '<p style="color:#a33;font-size:.85rem;text-align:center">Menü yüklenemedi.</p>';
+            '<p style="color:#a33;font-size:14px">Menü yüklenemedi.</p>';
     }
 });
 
 function wire() {
-    document.getElementById('fab').onclick = () =>
-        scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('btnMenu').onclick = () => showPage('cats');
+    document.getElementById('backCover').onclick = () => showPage('cover');
+    document.getElementById('backCats').onclick = () => showPage('cats');
+    document.getElementById('backItems').onclick = () => showPage('items');
 
-    addEventListener('scroll', () => {
-        document.getElementById('fab').classList.toggle('show', scrollY > 400);
-    }, { passive: true });
+    window.addEventListener('orientationchange', checkOrient);
+    window.addEventListener('resize', checkOrient);
+    checkOrient();
+}
+
+function checkOrient() {
+    const o = document.getElementById('orient');
+    const landscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
+    o.style.display = landscape ? 'block' : 'none';
+}
+
+function showPage(name) {
+    Object.values(pages).forEach(p => p.classList.add('hide'));
+    pages[name].classList.remove('hide');
+    document.getElementById('app').scrollTop = 0;
+}
+
+function renderCover() {
+    const r = D.restaurant || {};
+    const name = r.name || 'NOA caffé & co';
+
+    document.getElementById('coverName').textContent = name;
+    document.getElementById('orientName').textContent = name;
+
+    const coverEl = document.getElementById('coverBg');
+    const coverUrl = r.cover || r.banner || '';
+    if (coverUrl) {
+        coverEl.innerHTML = `<div style="background-image:url('${coverUrl}')"></div>`;
+    } else {
+        coverEl.innerHTML = `<div style="background:linear-gradient(180deg,rgba(59,37,22,.3) 0%,rgba(59,37,22,.85) 100%),url('/logo.png') center 30%/120px no-repeat,var(--backbtncolor)"></div>`;
+    }
+
+    if (r.description) {
+        document.getElementById('menuNote').textContent =
+            'Güncel menümüze buradan ulaşabilirsiniz. ' + r.description;
+    }
+}
+
+function renderCategories() {
+    const ul = document.getElementById('catGrid');
+    ul.innerHTML = D.categories.map(cat => {
+        const count = cat.items.filter(i => i.available !== false).length;
+        if (!count) return '';
+
+        const img = cat.banner
+            ? `<img class="cat-img" src="${cat.banner}" alt="" loading="lazy">`
+            : `<div class="cat-placeholder"><span>${cat.icon || '📋'}</span></div>`;
+
+        return `<li data-id="${cat.id}">
+            ${img}
+            <h2>${cat.name}</h2>
+        </li>`;
+    }).join('');
+
+    ul.querySelectorAll('li').forEach(li => {
+        li.onclick = () => openCategory(li.dataset.id);
+        const img = li.querySelector('.cat-img');
+        if (img) {
+            img.onerror = () => {
+                const icon = D.categories.find(c => c.id === li.dataset.id)?.icon || '📋';
+                const ph = document.createElement('div');
+                ph.className = 'cat-placeholder';
+                ph.innerHTML = `<span>${icon}</span>`;
+                img.replaceWith(ph);
+            };
+        }
+    });
+}
+
+function openCategory(id) {
+    currentCat = D.categories.find(c => c.id === id);
+    if (!currentCat) return;
+
+    itemStore.length = 0;
+
+    document.getElementById('itemsTopTitle').textContent = currentCat.name;
+    document.getElementById('grpTitle').textContent = currentCat.name;
+
+    const ul = document.getElementById('itemList');
+    const available = currentCat.items.filter(i => i.available !== false);
+
+    ul.innerHTML = available.map(it => {
+        const idx = storeItem(it, currentCat);
+        const img = it.image
+            ? `<img src="${it.image}" alt="" loading="lazy" onerror="this.remove()">`
+            : '';
+        const desc = it.description
+            ? `<h5 class="udetay">${it.description}</h5>` : '';
+
+        return `<li data-idx="${idx}">
+            ${img}
+            <h2>${it.name}</h2>
+            <span class="price">${it.price} ₺</span>
+            ${desc}
+        </li>`;
+    }).join('');
+
+    ul.querySelectorAll('li').forEach(li => {
+        li.onclick = () => openDetail(+li.dataset.idx);
+    });
+
+    showPage('items');
 }
 
 function storeItem(item, cat) {
@@ -32,118 +140,25 @@ function storeItem(item, cat) {
         description: item.description || '',
         price: item.price,
         image: item.image || '',
-        catName: cat ? cat.name : item._c || '',
-        catIcon: cat ? cat.icon : item._i || ''
+        catName: cat.name,
+        catIcon: cat.icon || ''
     });
     return idx;
 }
 
-function renderTop() {
-    const r = D.restaurant;
-    if (!r) return;
-    const el = document.getElementById('topLoc');
-    if (r.address) el.textContent = r.address;
-}
-
-function renderTabs() {
-    const el = document.getElementById('tabsScroll');
-    el.innerHTML = D.categories.map(c =>
-        `<button class="tab" data-id="${c.id}" onclick="go('${c.id}')">${c.icon} ${c.name}</button>`
-    ).join('');
-    spy();
-}
-
-function go(id) {
-    const s = document.getElementById('s-' + id);
-    if (!s) return;
-    scrollTo({ top: s.offsetTop - 52, behavior: 'smooth' });
-}
-
-function spy() {
-    const tabs = document.querySelectorAll('.tab');
-    const io = new IntersectionObserver(es => {
-        es.forEach(e => {
-            if (!e.isIntersecting) return;
-            const id = e.target.id.replace('s-', '');
-            tabs.forEach(t => t.classList.toggle('on', t.dataset.id === id));
-            document.querySelector(`.tab[data-id="${id}"]`)
-                ?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        });
-    }, { rootMargin: '-60px 0px -65% 0px', threshold: 0.05 });
-
-    D.categories.forEach(c => {
-        const s = document.getElementById('s-' + c.id);
-        if (s) io.observe(s);
-    });
-}
-
-function renderMenu() {
-    const box = document.getElementById('menuInner');
-
-    D.categories.forEach(cat => {
-        const block = document.createElement('section');
-        block.className = 'cat-block';
-        block.id = 's-' + cat.id;
-
-        const available = cat.items.filter(i => i.available !== false);
-        if (!available.length) return;
-
-        const rows = available.map(it => {
-            const idx = storeItem(it, cat);
-            const thumb = it.image
-                ? `<img class="item-thumb" src="${it.image}" alt="" loading="lazy" onerror="this.remove()">`
-                : '';
-            const desc = it.description
-                ? `<div class="item-desc">${it.description}</div>` : '';
-            const badge = it.popular ? `<span class="item-badge">Popüler</span>` : '';
-
-            return `<div class="item" onclick="showItem(${idx})">
-                ${thumb}
-                <div class="item-body">
-                    <div class="item-row">
-                        <span class="item-name">${it.name}</span>
-                        <span class="item-price">${it.price} ₺</span>
-                    </div>
-                    ${desc}
-                    ${badge}
-                </div>
-            </div>`;
-        }).join('');
-
-        block.innerHTML = `
-            <div class="cat-head">
-                <h2>${cat.icon} ${cat.name} <span>(${available.length})</span></h2>
-            </div>
-            <div class="cat-list">${rows}</div>
-        `;
-        box.appendChild(block);
-    });
-}
-
-function showItem(idx) {
+function openDetail(idx) {
     const d = itemStore[idx];
     if (!d) return;
 
-    const imgEl = document.getElementById('modalImg');
+    let html = '';
     if (d.image) {
-        imgEl.className = 'modal-img has-img';
-        imgEl.innerHTML = `<img src="${d.image}" alt="${d.name}" onerror="this.parentElement.className='modal-img';this.parentElement.innerHTML=''">`;
-    } else {
-        imgEl.className = 'modal-img';
-        imgEl.innerHTML = '';
+        html += `<img src="${d.image}" alt="${d.name}" onerror="this.remove()">`;
     }
+    html += `<span class="dcat">${d.catIcon} ${d.catName}</span>`;
+    html += `<h1>${d.name}</h1>`;
+    if (d.description) html += `<p>${d.description}</p>`;
+    html += `<div class="dprice">${d.price} ₺</div>`;
 
-    document.getElementById('modalCat').textContent = (d.catIcon || '') + ' ' + (d.catName || '');
-    document.getElementById('modalTitle').textContent = d.name;
-    document.getElementById('modalDesc').textContent = d.description || '';
-    document.getElementById('modalPrice').textContent = d.price + ' ₺';
-    document.getElementById('modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    document.getElementById('detailBox').innerHTML = html;
+    showPage('detail');
 }
-
-function closeModal() {
-    document.getElementById('modal').classList.remove('open');
-    document.body.style.overflow = '';
-}
-
-addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });

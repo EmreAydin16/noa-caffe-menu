@@ -2,64 +2,74 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>NOA caffé & co | Menü</title>
     <meta name="theme-color" content="#3b2516">
     <meta property="og:title" content="NOA caffé & co">
     <meta property="og:description" content="Kahve & Fast Food - Cumhuriyet Caddesi, Bursa">
     <meta property="og:image" content="/logo.png">
-    <meta name="apple-mobile-web-app-title" content="NOA caffé & co">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="icon" type="image/png" href="/logo.png">
 </head>
 <body>
 
-    <header class="top">
-        <div class="top-inner">
-            <img src="/logo.png" alt="NOA" class="top-logo" onerror="this.style.display='none'">
-            <div class="top-text">
-                <h1 class="top-name">NOA caffé & co</h1>
-                <p class="top-loc" id="topLoc">Cumhuriyet Caddesi, Bursa</p>
+    <div class="loader" id="loader"><span></span></div>
+
+    <div id="app">
+        <!-- Kapak -->
+        <div class="page start" id="pageCover">
+            <div class="cover" id="coverBg"></div>
+            <div class="cover-name" id="coverName"></div>
+            <div class="gomain">
+                <a id="btnMenu">MENÜ</a>
             </div>
         </div>
-        <p class="top-note">Güncel menümüze aşağıdan ulaşabilirsiniz.</p>
-    </header>
 
-    <nav class="tabs" id="tabs">
-        <div class="tabs-scroll" id="tabsScroll"></div>
-    </nav>
-
-    <main class="menu" id="main">
-        <div class="menu-inner" id="menuInner">
-            <div class="loader" id="loader"><div class="loader-dot"></div></div>
-        </div>
-    </main>
-
-    <footer class="foot">
-        <p class="foot-kdv">Fiyatlarımıza KDV dahildir.</p>
-        <p class="foot-copy">© 2026 NOA caffé & co</p>
-    </footer>
-
-    <div class="modal" id="modal">
-        <div class="modal-bg" onclick="closeModal()"></div>
-        <div class="modal-box">
-            <button class="modal-x" onclick="closeModal()" aria-label="Kapat">&times;</button>
-            <div class="modal-img" id="modalImg"></div>
-            <div class="modal-body">
-                <span class="modal-cat" id="modalCat"></span>
-                <h3 class="modal-title" id="modalTitle"></h3>
-                <p class="modal-desc" id="modalDesc"></p>
-                <div class="modal-price" id="modalPrice"></div>
+        <!-- Kategoriler -->
+        <div class="page main hide" id="pageCats">
+            <div class="topbar">
+                <button class="backbtn2" id="backCover" aria-label="Geri">&#8592;</button>
+                <h1>Menü</h1>
             </div>
+            <p class="menualtitxt" id="menuNote">Güncel menümüze buradan ulaşabilirsiniz.</p>
+            <div class="gruplar">
+                <ul id="catGrid"></ul>
+            </div>
+            <p class="foot-kdv">Fiyatlarımıza KDV dahildir.</p>
+        </div>
+
+        <!-- Ürünler -->
+        <div class="page main hide" id="pageItems">
+            <div class="topbar">
+                <button class="backbtn2" id="backCats" aria-label="Geri">&#8592;</button>
+                <h1 id="itemsTopTitle"></h1>
+            </div>
+            <div class="grpadi">
+                <div class="grupbaslik" id="grpTitle"></div>
+            </div>
+            <div class="urunler">
+                <ul id="itemList"></ul>
+            </div>
+        </div>
+
+        <!-- Ürün detay -->
+        <div class="page urun hide" id="pageDetail">
+            <div class="topbar">
+                <button class="backbtn2" id="backItems" aria-label="Geri">&#8592;</button>
+                <h1>Ürün</h1>
+            </div>
+            <div class="detay" id="detailBox"></div>
         </div>
     </div>
 
-    <button class="fab" id="fab" aria-label="Yukarı">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-    </button>
+    <div class="orient" id="orient">
+        <div>
+            <h4 id="orientName">NOA caffé & co</h4>
+            <span>Lütfen cihazınızı dik konumda kullanınız.</span>
+        </div>
+    </div>
 
     <script src="/js/menu.js"></script>
 </body>
