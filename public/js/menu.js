@@ -1,12 +1,16 @@
 let D;
 let currentCat = null;
-const itemStore = [];
+let mainScroll = 0;
+let listScroll = 0;
+let tabmenuOpen = false;
+let listStore = [];
+let searchStore = [];
 
-const pages = {
-    cover: document.getElementById('pageCover'),
-    cats: document.getElementById('pageCats'),
-    items: document.getElementById('pageItems'),
-    detail: document.getElementById('pageDetail')
+const PAGES = {
+    start: document.getElementById('pageStart'),
+    main: document.getElementById('pageMain'),
+    list: document.getElementById('pageList'),
+    urun: document.getElementById('pageUrun')
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -16,18 +20,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         D = await r.json();
         renderCover();
         renderCategories();
+        buildSearchIndex();
         document.getElementById('loader').classList.add('done');
     } catch {
         document.getElementById('loader').innerHTML =
-            '<p style="color:#a33;font-size:14px">Menü yüklenemedi.</p>';
+            '<p style="color:#a33;font-size:14px;padding:20px">Menü yüklenemedi.</p>';
     }
 });
 
 function wire() {
-    document.getElementById('btnMenu').onclick = () => showPage('cats');
-    document.getElementById('backCover').onclick = () => showPage('cover');
-    document.getElementById('backCats').onclick = () => showPage('cats');
-    document.getElementById('backItems').onclick = () => showPage('items');
+    const app = document.getElementById('app');
+
+    document.getElementById('gosipa').onclick = () => loadPage('main');
+    document.getElementById('cover').onclick = () => {
+        if (!tabmenuOpen) loadPage('main');
+    };
+    document.getElementById('gotabmenu').onclick = e => {
+        e.stopPropagation();
+        toggleTabmenu();
+    };
+    document.getElementById('tabGoMenu').onclick = () => {
+        closeTabmenu();
+        loadPage('main');
+    };
+
+    document.getElementById('backStart').onclick = () => loadPage('start');
+    document.getElementById('backMain').onclick = () => {
+        loadPage('main', { scroll: listScroll });
+    };
+    document.getElementById('backList').onclick = () => loadPage('list');
+
+    document.getElementById('btnSearch').onclick = openSearch;
+    document.getElementById('searchClose').onclick = closeSearch;
+    document.getElementById('txtsearch').addEventListener('input', filterSearch);
+
+    document.getElementById('navToggle').onclick = toggleSideNav;
 
     window.addEventListener('orientationchange', checkOrient);
     window.addEventListener('resize', checkOrient);
@@ -35,17 +62,62 @@ function wire() {
 }
 
 function checkOrient() {
-    const o = document.getElementById('orient');
     const landscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
-    o.style.display = landscape ? 'block' : 'none';
+    document.getElementById('orient').style.display = landscape ? 'block' : 'none';
 }
 
-function showPage(name) {
-    Object.values(pages).forEach(p => p.classList.add('hide'));
-    pages[name].classList.remove('hide');
-    document.getElementById('app').scrollTop = 0;
+/* ===== Sayfa geçişi (menucebimde loadPage) ===== */
+function loadPage(name, opts = {}) {
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('show');
+
+    setTimeout(() => {
+        if (PAGES.main && !PAGES.main.classList.contains('hide')) {
+            mainScroll = document.getElementById('app').scrollTop;
+        }
+
+        Object.values(PAGES).forEach(p => p.classList.add('hide'));
+        closeTabmenu();
+        closeSideNav();
+        closeSearch();
+
+        PAGES[name].classList.remove('hide');
+
+        const app = document.getElementById('app');
+        if (opts.scroll !== undefined) {
+            app.scrollTop = opts.scroll;
+        } else {
+            app.scrollTop = 0;
+        }
+
+        setTimeout(() => overlay.classList.remove('show'), 80);
+    }, 180);
 }
 
+/* ===== Tabmenu ===== */
+function toggleTabmenu() {
+    tabmenuOpen = !tabmenuOpen;
+    document.getElementById('tabmenu').classList.toggle('hide', !tabmenuOpen);
+    document.getElementById('pageStart').classList.toggle('openned', tabmenuOpen);
+}
+function closeTabmenu() {
+    tabmenuOpen = false;
+    document.getElementById('tabmenu').classList.add('hide');
+    document.getElementById('pageStart').classList.remove('openned');
+}
+
+/* ===== Side nav ===== */
+function toggleSideNav() {
+    document.getElementById('headbarMain').classList.toggle('nav--open');
+    const menu = document.getElementById('sideNav');
+    menu.hidden = !menu.hidden;
+}
+function closeSideNav() {
+    document.getElementById('headbarMain').classList.remove('nav--open');
+    document.getElementById('sideNav').hidden = true;
+}
+
+/* ===== Kapak ===== */
 function renderCover() {
     const r = D.restaurant || {};
     const name = r.name || 'NOA caffé & co';
@@ -53,89 +125,112 @@ function renderCover() {
     document.getElementById('coverName').textContent = name;
     document.getElementById('orientName').textContent = name;
 
-    const coverEl = document.getElementById('coverBg');
     const coverUrl = r.cover || r.banner || '';
+    const cover = document.getElementById('cover');
     if (coverUrl) {
-        coverEl.innerHTML = `<div style="background-image:url('${coverUrl}')"></div>`;
+        cover.innerHTML = `<div style="background-image:url('${coverUrl}')"></div>`;
     } else {
-        coverEl.innerHTML = `<div style="background:linear-gradient(180deg,rgba(59,37,22,.3) 0%,rgba(59,37,22,.85) 100%),url('/logo.png') center 30%/120px no-repeat,var(--backbtncolor)"></div>`;
+        cover.innerHTML = `<div style="background:linear-gradient(180deg,rgba(59,37,22,.25) 0%,rgba(59,37,22,.88) 100%),url('/logo.png') center 28%/130px no-repeat,var(--backbtncolor)"></div>`;
     }
 
-    if (r.description) {
-        document.getElementById('menuNote').textContent =
-            'Güncel menümüze buradan ulaşabilirsiniz. ' + r.description;
-    }
+    const note = r.description
+        ? `Güncel menümüze buradan ulaşabilirsiniz. ${r.description}`
+        : 'Güncel menümüze buradan ulaşabilirsiniz.';
+    document.getElementById('menuAltTxt').textContent = note;
 }
 
+/* ===== Kategoriler (gruplar) ===== */
 function renderCategories() {
     const ul = document.getElementById('catGrid');
+    const gruplarBox = document.getElementById('gruplarBox');
+    let hasBanner = false;
+
     ul.innerHTML = D.categories.map(cat => {
         const count = cat.items.filter(i => i.available !== false).length;
         if (!count) return '';
 
-        const img = cat.banner
-            ? `<img class="cat-img" src="${cat.banner}" alt="" loading="lazy">`
-            : `<div class="cat-placeholder"><span>${cat.icon || '📋'}</span></div>`;
+        if (cat.banner) hasBanner = true;
 
-        return `<li data-id="${cat.id}">
-            ${img}
-            <h2>${cat.name}</h2>
-        </li>`;
+        const img = cat.banner
+            ? `<img src="${cat.banner}" alt="" loading="lazy">`
+            : `<div class="cat-ph"><span>${cat.icon || '📋'}</span></div>`;
+
+        return `<li data-id="${cat.id}">${img}<h2>${cat.name}</h2></li>`;
     }).join('');
+
+    if (!hasBanner) gruplarBox.classList.add('noimg');
 
     ul.querySelectorAll('li').forEach(li => {
         li.onclick = () => openCategory(li.dataset.id);
-        const img = li.querySelector('.cat-img');
+        const img = li.querySelector('img');
         if (img) {
             img.onerror = () => {
-                const icon = D.categories.find(c => c.id === li.dataset.id)?.icon || '📋';
+                const cat = D.categories.find(c => c.id === li.dataset.id);
                 const ph = document.createElement('div');
-                ph.className = 'cat-placeholder';
-                ph.innerHTML = `<span>${icon}</span>`;
+                ph.className = 'cat-ph';
+                ph.innerHTML = `<span>${cat?.icon || '📋'}</span>`;
                 img.replaceWith(ph);
             };
         }
     });
 }
 
+/* ===== Kategori aç (list) ===== */
 function openCategory(id) {
     currentCat = D.categories.find(c => c.id === id);
     if (!currentCat) return;
 
-    itemStore.length = 0;
+    listStore = [];
+    listScroll = document.getElementById('app').scrollTop;
 
-    document.getElementById('itemsTopTitle').textContent = currentCat.name;
-    document.getElementById('grpTitle').textContent = currentCat.name;
+    document.getElementById('listGrpTitle').textContent = currentCat.name;
 
-    const ul = document.getElementById('itemList');
+    if (currentCat.banner) {
+        document.getElementById('listHeadImg').src = currentCat.banner;
+        document.getElementById('listHeadImg').onerror = () => {
+            document.getElementById('listHeadImg').src = '/logo.png';
+        };
+    } else {
+        document.getElementById('listHeadImg').src = '/logo.png';
+    }
+
     const available = currentCat.items.filter(i => i.available !== false);
+    const hasImg = available.some(i => i.image);
+    const urunlerEl = document.getElementById('listUrunler');
+    urunlerEl.classList.toggle('noimg', !hasImg);
 
-    ul.innerHTML = available.map(it => {
-        const idx = storeItem(it, currentCat);
-        const img = it.image
-            ? `<img src="${it.image}" alt="" loading="lazy" onerror="this.remove()">`
-            : '';
-        const desc = it.description
-            ? `<h5 class="udetay">${it.description}</h5>` : '';
-
-        return `<li data-idx="${idx}">
-            ${img}
-            <h2>${it.name}</h2>
-            <span class="price">${it.price} ₺</span>
-            ${desc}
-        </li>`;
+    document.getElementById('itemList').innerHTML = available.map(it => {
+        const idx = storeItem(it, currentCat, listStore);
+        return buildItemRow(it, idx);
     }).join('');
 
-    ul.querySelectorAll('li').forEach(li => {
-        li.onclick = () => openDetail(+li.dataset.idx);
+    document.getElementById('itemList').querySelectorAll('li').forEach(li => {
+        li.onclick = () => openDetail(+li.dataset.idx, listStore);
     });
 
-    showPage('items');
+    loadPage('list');
 }
 
-function storeItem(item, cat) {
-    const idx = itemStore.length;
-    itemStore.push({
+function buildItemRow(it, idx) {
+    const img = it.image
+        ? `<img src="${it.image}" alt="" loading="lazy" onerror="this.remove()">`
+        : '';
+    const desc = it.description
+        ? `<h5 class="udetay">${it.description}</h5>`
+        : `<h5 class="udetay">&nbsp;</h5>`;
+
+    return `<li data-idx="${idx}" data-name="${norm(it.name)}">
+        ${img}
+        <h2><p>${it.name}</p></h2>
+        ${desc}
+        <div class="divlalerjen"><span>${it.price} ₺</span><div></div></div>
+        <i class="arr">›</i>
+    </li>`;
+}
+
+function storeItem(item, cat, store) {
+    const idx = store.length;
+    store.push({
         name: item.name,
         description: item.description || '',
         price: item.price,
@@ -146,19 +241,89 @@ function storeItem(item, cat) {
     return idx;
 }
 
-function openDetail(idx) {
-    const d = itemStore[idx];
+/* ===== Ürün detay (urun) ===== */
+function openDetail(idx, store) {
+    const d = store[idx];
     if (!d) return;
 
-    let html = '';
-    if (d.image) {
-        html += `<img src="${d.image}" alt="${d.name}" onerror="this.remove()">`;
-    }
-    html += `<span class="dcat">${d.catIcon} ${d.catName}</span>`;
-    html += `<h1>${d.name}</h1>`;
-    if (d.description) html += `<p>${d.description}</p>`;
-    html += `<div class="dprice">${d.price} ₺</div>`;
+    const detayBox = document.getElementById('detayBox');
+    const imgEl = document.getElementById('detayImg');
 
-    document.getElementById('detailBox').innerHTML = html;
-    showPage('detail');
+    if (d.image) {
+        detayBox.classList.remove('noimg');
+        imgEl.src = d.image;
+        imgEl.style.display = 'block';
+        imgEl.onerror = () => { imgEl.style.display = 'none'; detayBox.classList.add('noimg'); };
+    } else {
+        detayBox.classList.add('noimg');
+        imgEl.style.display = 'none';
+    }
+
+    document.getElementById('detayTitle').textContent = d.name;
+    document.getElementById('detayDesc').textContent = d.description || '';
+
+    document.getElementById('fiyatList').innerHTML =
+        `<li class="done">
+            <span class="portion-main-row">
+                ${d.name}
+                <span class="portion-price">${d.price} ₺</span>
+            </span>
+        </li>`;
+
+    loadPage('urun');
+}
+
+/* ===== Arama ===== */
+function buildSearchIndex() {
+    searchStore = [];
+    const items = [];
+    D.categories.forEach(cat => {
+        cat.items.filter(i => i.available !== false).forEach(it => {
+            const idx = storeItem(it, cat, searchStore);
+            items.push({ idx, it });
+        });
+    });
+
+    const hasImg = items.some(x => x.it.image);
+    const el = document.getElementById('searchResults');
+    el.classList.toggle('noimg', !hasImg);
+
+    document.getElementById('allItems').innerHTML = items.map(({ idx, it }) =>
+        buildItemRow(it, idx)
+    ).join('');
+
+    document.getElementById('allItems').querySelectorAll('li').forEach(li => {
+        li.onclick = () => {
+            closeSearch();
+            openDetail(+li.dataset.idx, searchStore);
+        };
+    });
+}
+
+function openSearch() {
+    document.getElementById('searchbar').classList.add('open');
+    document.getElementById('pageMain').classList.add('wtsearch');
+    document.getElementById('gruplarBox').classList.add('hide');
+    document.getElementById('searchResults').classList.remove('hide');
+    document.getElementById('txtsearch').focus();
+}
+
+function closeSearch() {
+    document.getElementById('searchbar').classList.remove('open');
+    document.getElementById('pageMain').classList.remove('wtsearch');
+    document.getElementById('gruplarBox').classList.remove('hide');
+    document.getElementById('searchResults').classList.add('hide');
+    document.getElementById('txtsearch').value = '';
+    filterSearch();
+}
+
+function filterSearch() {
+    const q = norm(document.getElementById('txtsearch').value);
+    document.getElementById('allItems').querySelectorAll('li').forEach(li => {
+        li.style.display = !q || li.dataset.name.includes(q) ? '' : 'none';
+    });
+}
+
+function norm(s) {
+    return (s || '').toLocaleLowerCase('tr-TR').replace(/\s/g, '');
 }

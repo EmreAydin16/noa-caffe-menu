@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>NOA caffé & co | Menü</title>
@@ -16,51 +16,91 @@
 <body>
 
     <div class="loader" id="loader"><span></span></div>
+    <div class="overlay" id="overlay"></div>
 
     <div id="app">
-        <!-- Kapak -->
-        <div class="page start" id="pageCover">
-            <div class="cover" id="coverBg"></div>
-            <div class="cover-name" id="coverName"></div>
-            <div class="gomain">
-                <a id="btnMenu">MENÜ</a>
-            </div>
+
+        <!-- Yan tab menü (menucebimde tabmenu) -->
+        <div class="tabmenu hide" id="tabmenu">
+            <nav>
+                <span class="nav-mi active" id="tabGoMenu">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 11h8V3H3v8zm0 10h8v-8H3v8zm10 0h8v-8h-8v8zm0-18v8h8V3h-8z"/></svg>
+                    Menü
+                </span>
+                <span class="nav-mi disabled">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg>
+                    Hesabım
+                </span>
+                <span class="nav-mi disabled">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    Garson Çağır
+                </span>
+                <span class="nav-mi disabled">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    Görüş ve Öneri
+                </span>
+            </nav>
         </div>
 
-        <!-- Kategoriler -->
-        <div class="page main hide" id="pageCats">
-            <div class="topbar">
-                <button class="backbtn2" id="backCover" aria-label="Geri">&#8592;</button>
-                <h1>Menü</h1>
-            </div>
-            <p class="menualtitxt" id="menuNote">Güncel menümüze buradan ulaşabilirsiniz.</p>
-            <div class="gruplar">
-                <ul id="catGrid"></ul>
-            </div>
-            <p class="foot-kdv">Fiyatlarımıza KDV dahildir.</p>
+        <!-- KAPAK -->
+        <div class="page start" id="pageStart">
+            <div class="cover" id="cover"></div>
+            <div class="cover_name" id="coverName"></div>
+            <div class="gosipa" id="gosipa"><a></a></div>
+            <div class="gotabmenu pulse-btn" id="gotabmenu"><a></a></div>
         </div>
 
-        <!-- Ürünler -->
-        <div class="page main hide" id="pageItems">
-            <div class="topbar">
-                <button class="backbtn2" id="backCats" aria-label="Geri">&#8592;</button>
-                <h1 id="itemsTopTitle"></h1>
+        <!-- ANA MENÜ (kategoriler) -->
+        <div class="page wthead main hide" id="pageMain">
+            <div class="headbar nav" id="headbarMain">
+                <button class="nav__toggle" id="navToggle" aria-label="Menü">
+                    <svg class="menuicon" viewBox="0 0 50 50" width="42" height="42">
+                        <line class="menuicon__bar" x1="13" y1="16.5" x2="37" y2="16.5"/>
+                        <line class="menuicon__bar" x1="13" y1="24.5" x2="37" y2="24.5"/>
+                        <line class="menuicon__bar" x1="13" y1="32.5" x2="37" y2="32.5"/>
+                        <circle class="menuicon__circle" r="23" cx="25" cy="25"/>
+                    </svg>
+                </button>
+                <ul class="nav__menu" id="sideNav" hidden>
+                    <li class="nav__item"><div class="nav__link"><span class="nav-mi active" data-go="main">Menü</span></div></li>
+                    <li class="nav__item"><div class="nav__link"><span class="nav-mi disabled">Hesabım</span></div></li>
+                    <li class="nav__item"><div class="nav__link"><span class="nav-mi disabled">Garson Çağır</span></div></li>
+                    <li class="nav__item"><div class="nav__link"><span class="nav-mi disabled">Görüş ve Öneri</span></div></li>
+                </ul>
+                <img src="/logo.png" alt="NOA" class="head-logo">
+                <div class="splash"></div>
+                <div class="splash2"></div>
+                <button class="btnSrc" id="btnSearch" aria-label="Ara">&#128269;</button>
             </div>
-            <div class="grpadi">
-                <div class="grupbaslik" id="grpTitle"></div>
+            <div class="searchbar" id="searchbar">
+                <span class="sb-icon">&#128269;</span>
+                <input type="text" id="txtsearch" placeholder="Ürün ara..">
+                <a id="searchClose">Kapat</a>
             </div>
-            <div class="urunler">
-                <ul id="itemList"></ul>
-            </div>
+            <div class="bottom"><div class="backbtn" id="backStart"></div></div>
+            <div class="gruplar" id="gruplarBox"><ul id="catGrid"></ul></div>
+            <div class="menualtitxt" id="menuAltTxt">Güncel menümüze buradan ulaşabilirsiniz.</div>
+            <div class="urunler noimg hide" id="searchResults"><ul id="allItems"></ul></div>
         </div>
 
-        <!-- Ürün detay -->
-        <div class="page urun hide" id="pageDetail">
-            <div class="topbar">
-                <button class="backbtn2" id="backItems" aria-label="Geri">&#8592;</button>
-                <h1>Ürün</h1>
+        <!-- KATEGORİ ÜRÜNLERİ -->
+        <div class="page wthead list hide" id="pageList">
+            <div class="headbar"><img src="/logo.png" alt="NOA" class="head-logo" id="listHeadImg"></div>
+            <div class="bottom"><div class="backbtn" id="backMain"></div></div>
+            <div class="grpadi"><div class="grupbaslik" id="listGrpTitle"></div></div>
+            <div class="urunler noimg" id="listUrunler"><ul id="itemList"></ul></div>
+        </div>
+
+        <!-- ÜRÜN DETAY -->
+        <div class="page wthead urun hide" id="pageUrun">
+            <div class="headbar"><img src="/logo.png" alt="NOA" class="head-logo"></div>
+            <div class="bottom"><div class="backbtn" id="backList"></div></div>
+            <div class="detay noimg" id="detayBox">
+                <img id="detayImg" alt="">
+                <h1 id="detayTitle"></h1>
+                <p id="detayDesc"></p>
             </div>
-            <div class="detay" id="detailBox"></div>
+            <div class="fiyatlar onerow mb50"><ul id="fiyatList"></ul></div>
         </div>
     </div>
 
