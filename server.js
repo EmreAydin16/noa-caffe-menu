@@ -60,10 +60,8 @@ async function readMenuFromSupabase() {
     );
 
     if (res.status === 404) {
-        const seed = readMenuFromFile();
-        await writeMenuToSupabase(seed);
-        console.log('  Supabase bos - menu.json ile dolduruldu');
-        return seed;
+        console.warn('Supabase menu.json bulunamadi - yerel dosya okunuyor (Supabase UZERINE YAZILMAZ)');
+        return readMenuFromFile();
     }
 
     if (!res.ok) {

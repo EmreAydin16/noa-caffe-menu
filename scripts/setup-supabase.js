@@ -1,9 +1,7 @@
 /**
- * Supabase Storage kurulumu - SQL gerekmez.
- * Kullanim:
- *   set SUPABASE_URL=https://xxx.supabase.co
- *   set SUPABASE_SERVICE_KEY=eyJ...
- *   node scripts/setup-supabase.js
+ * DIKKAT: Canli menu.json dosyasini Supabase'e yazar - TUM fiyatlari sifirlar!
+ * Sadece ilk kurulumda kullan. Canli veriyi ezmemek icin --force gerekir.
+ *   node scripts/setup-supabase.js --force
  */
 
 const fs = require('fs');
@@ -28,6 +26,8 @@ function headers(extra = {}) {
 }
 
 async function main() {
+    const force = process.argv.includes('--force');
+
     console.log('1/3 Bucket olusturuluyor...');
     const bucketRes = await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
         method: 'POST',
@@ -43,6 +43,13 @@ async function main() {
     console.log('   Bucket hazir');
 
     console.log('2/3 Menu yukleniyor...');
+    const checkExisting = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${FILE}`, {
+        headers: headers()
+    });
+    if (checkExisting.ok && !force) {
+        console.error('   UYARI: Canli menu zaten var! Uzerine yazmak icin: node scripts/setup-supabase.js --force');
+        process.exit(1);
+    }
     const menu = JSON.parse(
         fs.readFileSync(path.join(__dirname, '..', 'data', 'menu.json'), 'utf8')
     );
