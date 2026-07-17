@@ -39,6 +39,13 @@ const MENU_CACHE_MS = 120000;
 let menuCache = null;
 let menuCacheTime = 0;
 let menuEtag = '';
+let writeLock = false;
+
+function updateMenuCache(data) {
+    menuCache = JSON.parse(JSON.stringify(data));
+    menuCacheTime = Date.now();
+    menuEtag = etagFor(JSON.stringify(menuCache));
+}
 
 function invalidateMenuCache() {
     menuCache = null;
@@ -92,15 +99,17 @@ function supabaseHeaders(extra = {}) {
     };
 }
 
+let bucketVerified = false;
 async function ensureSupabaseBucket() {
+    if (bucketVerified) return;
     const res = await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
         method: 'POST',
         headers: supabaseHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ name: SUPABASE_BUCKET, public: false })
     });
-    if (res.ok) return;
+    if (res.ok) { bucketVerified = true; return; }
     const err = await res.text();
-    if (err.includes('already exists') || err.includes('Duplicate')) return;
+    if (err.includes('already exists') || err.includes('Duplicate')) { bucketVerified = true; return; }
     throw new Error(`Supabase bucket hatasi: ${res.status} ${err}`);
 }
 
@@ -201,7 +210,7 @@ async function writeMenuToSupabase(data) {
 
 async function readMenu() {
     if (menuCache && Date.now() - menuCacheTime < MENU_CACHE_MS) {
-        return menuCache;
+        return JSON.parse(JSON.stringify(menuCache));
     }
 
     let data;
@@ -224,32 +233,46 @@ async function readMenu() {
         }
     }
 
-    menuCache = data;
-    menuCacheTime = Date.now();
-    menuEtag = etagFor(JSON.stringify(data));
-    return data;
+    updateMenuCache(data);
+    return JSON.parse(JSON.stringify(data));
 }
 
 async function writeMenu(data) {
-    sortMenu(data);
-    invalidateMenuCache();
+    if (writeLock) {
+        await new Promise(r => {
+            const check = () => writeLock ? setTimeout(check, 50) : r();
+            check();
+        });
+    }
+    writeLock = true;
 
     try {
-        if (USE_SUPABASE) {
-            const res = await fetch(
-                `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${SUPABASE_FILE}`,
-                { headers: supabaseHeaders() }
-            );
-            if (res.ok) await saveBackup(await res.json());
-        } else if (fs.existsSync(DATA_FILE)) {
-            await saveBackup(readMenuFromFile());
-        }
-    } catch (err) {
-        console.warn('Yedek alinamadi:', err.message);
-    }
+        sortMenu(data);
 
-    if (USE_SUPABASE) return writeMenuToSupabase(data);
-    writeMenuToFile(data);
+        if (USE_SUPABASE) {
+            await writeMenuToSupabase(data);
+        } else {
+            writeMenuToFile(data);
+        }
+
+        updateMenuCache(data);
+
+        try {
+            if (USE_SUPABASE) {
+                const res = await fetch(
+                    `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${SUPABASE_FILE}`,
+                    { headers: supabaseHeaders() }
+                );
+                if (res.ok) await saveBackup(await res.json());
+            } else if (fs.existsSync(DATA_FILE)) {
+                await saveBackup(readMenuFromFile());
+            }
+        } catch (err) {
+            console.warn('Yedek alinamadi:', err.message);
+        }
+    } finally {
+        writeLock = false;
+    }
 }
 
 function applyOrder(data, body) {
@@ -412,7 +435,12 @@ const server = http.createServer(async (req, res) => {
                 order: cat.items.length
             };
             cat.items.push(newItem);
-            await writeMenu(data);
+            try {
+                await writeMenu(data);
+            } catch (writeErr) {
+                console.error('URUN EKLEME HATASI:', writeErr);
+                return sendJSON(res, { error: 'Kayit hatasi: ' + writeErr.message }, 500);
+            }
             return sendJSON(res, newItem);
         }
 

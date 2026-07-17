@@ -1,0 +1,802 @@
+{
+  "restaurant": {
+    "name": "Noa Caffe & Co",
+    "address": "Cumhuriyet Caddesi, Bursa",
+    "phone": "530 247 8116",
+    "instagram": "noacaffe.co",
+    "description": "Kahve & Fast Food",
+    "wifi": ""
+  },
+  "categories": [
+    {
+      "id": "caylar-sicak-icecekler",
+      "name": "Çaylar & Sıcak İçecekler",
+      "icon": "☕",
+      "banner": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "cay",
+          "name": "Çay",
+          "price": 40,
+          "description": "Taze demlenmiş Rize çayı",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "fincan-cay",
+          "name": "Fincan Çay",
+          "price": 60,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "klasik-bitki-caylari",
+          "name": "Klasik Bitki Çayları",
+          "price": 120,
+          "description": "Ihlamur, Nane Limon, Yeşil Çay, Papatya, Kış Çayı, Adaçayı",
+          "image": "",
+          "available": true,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "soft-icecekler",
+      "name": "Soft İçecekler",
+      "icon": "🥤",
+      "banner": "",
+      "items": [
+        {
+          "id": "su",
+          "name": "Su",
+          "price": 25,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "soda",
+          "name": "Soda",
+          "price": 50,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "meyveli-soda",
+          "name": "Meyveli Soda",
+          "price": 60,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "churchill",
+          "name": "Churchill",
+          "price": 100,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ayran",
+          "name": "Ayran",
+          "price": 40,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "kola",
+          "name": "Kola",
+          "price": 100,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "fanta",
+          "name": "Fanta",
+          "price": 100,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "gazoz",
+          "name": "Gazoz",
+          "price": 100,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ice-tea",
+          "name": "Ice Tea Çeşitleri",
+          "price": 100,
+          "description": "",
+          "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=400&fit=crop",
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "klasikler-kahveler",
+      "name": "Klasikler (Kahveler)",
+      "icon": "☕",
+      "banner": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "espresso",
+          "name": "Espresso",
+          "price": 140,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "double-espresso",
+          "name": "Double Espresso",
+          "price": 160,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "espresso-macchiato",
+          "name": "Espresso Macchiato",
+          "price": 160,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "turk-kahvesi",
+          "name": "Türk Kahvesi",
+          "price": 130,
+          "description": "",
+          "image": "https://i.hizliresim.com/3vj7z80.jpg",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "duble-turk-kahvesi",
+          "name": "Duble Türk Kahvesi",
+          "price": 190,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "dibek-kahvesi",
+          "name": "Dibek Kahvesi",
+          "price": 130,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "menengic-kahvesi",
+          "name": "Menengiç Kahvesi",
+          "price": 140,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "filtre-kahve",
+          "name": "Filtre Kahve",
+          "price": 190,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "americano",
+          "name": "Americano",
+          "price": 180,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "flat-white",
+          "name": "Flat White",
+          "price": 190,
+          "description": "",
+          "image": "https://i.hizliresim.com/442eqtf.jpg",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "latte",
+          "name": "Latte",
+          "price": 190,
+          "description": "",
+          "image": "https://i.hizliresim.com/qsqq580.jpg",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "karamel-latte",
+          "name": "Karamel Latte",
+          "price": 200,
+          "description": "",
+          "image": "https://i.hizliresim.com/6n94696.jpg",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "toffee-nut-latte",
+          "name": "Toffee Nut Latte",
+          "price": 200,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "lotus-latte",
+          "name": "Lotus Latte",
+          "price": 200,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "mocha",
+          "name": "Mocha",
+          "price": 200,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "white-mocha",
+          "name": "White Mocha",
+          "price": 200,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "caramel-macchiato",
+          "name": "Caramel Macchiato",
+          "price": 200,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "cappucino-mqbycu5q",
+          "name": "Cappucino",
+          "description": "",
+          "price": 190,
+          "image": "https://i.hizliresim.com/j91t7yx.jpg",
+          "popular": false,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "soguk-icecekler",
+      "name": "Soğuk İçecekler",
+      "icon": "🧊",
+      "banner": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "noa-limonata",
+          "name": "NOA El Yapımı Limonata",
+          "price": 160,
+          "description": "",
+          "image": "https://i.hizliresim.com/odkax5h.jpg",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "noa-brownisa",
+          "name": "NOA Brownisa (Yaban Mersini)",
+          "price": 160,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "noa-blueberry",
+          "name": "Noa BlueBerry",
+          "price": 200,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ice-filtre-coffee",
+          "name": "Ice Filtre Coffee",
+          "price": 180,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ice-americano",
+          "name": "Ice Americano",
+          "price": 190,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ice-latte",
+          "name": "Ice Latte",
+          "price": 200,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ice-mocha",
+          "name": "Ice Mocha",
+          "price": 220,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ice-karamel-latte",
+          "name": "Ice Karamel Latte",
+          "price": 220,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ice-white-mocha",
+          "name": "Ice White Mocha",
+          "price": 200,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "frappe",
+          "name": "Frappe",
+          "price": 220,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "milkshake",
+          "name": "Oreolu Milkshake",
+          "price": 200,
+          "description": "Çilekli / Çikolatalı / Oreolu",
+          "image": "https://i.hizliresim.com/58gsc82.jpg",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "frozen",
+          "name": "Orman Meyveli Frozen",
+          "price": 190,
+          "description": "Çilek / Orman Meyveli / Mangolu",
+          "image": "https://i.hizliresim.com/i2vpvd3.jpg",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "cilekli-limonata-mqf0019e",
+          "name": "Çilekli Limonata",
+          "description": "",
+          "price": 180,
+          "image": "https://i.hizliresim.com/ndpec02.jpg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "elmali-naneli-limonata-mqf06h0m",
+          "name": "Elmalı Naneli Limonata",
+          "description": "",
+          "price": 180,
+          "image": "https://i.hizliresim.com/pve7bpy.jpg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "mango-frozen-mqf18k83",
+          "name": "Mango Frozen",
+          "description": "Çilek / Orman Meyveli / Mangolu",
+          "price": 190,
+          "image": "https://i.hizliresim.com/qufoszp.jpg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "cilekli-milkshake-mqf1f8em",
+          "name": "Çilekli Milkshake",
+          "description": "Çilekli / Çikolatalı / Oreolu",
+          "price": 200,
+          "image": "https://i.hizliresim.com/qvxc0qn.jpg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "mavi-kokteyl-mqf1kl45",
+          "name": "COCO BLUE",
+          "description": "",
+          "price": 230,
+          "image": "https://i.hizliresim.com/8e7jgog.jpg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "kirmizi-kokteyl-tatli-mqf1pql3",
+          "name": "NOA VELVET",
+          "description": "",
+          "price": 230,
+          "image": "https://i.hizliresim.com/ofy42xz.jpg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "sari-kokteyl-mqf1vt5t",
+          "name": "TROPICANA",
+          "description": "Mango,Çarkı Felek, Limonata",
+          "price": 230,
+          "image": "https://i.hizliresim.com/bmj7iky.jpg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "yesil-kokteyl-mqf1xbzf",
+          "name": "MAYHOŞ",
+          "description": "Nane,Cool Lime,Elma,Limon",
+          "price": 230,
+          "image": "https://i.hizliresim.com/7anr6vg.jpg",
+          "popular": false,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "ozel-gun-tabagi",
+      "name": "Noa'nın Özel Gün Tabağı",
+      "icon": "⭐",
+      "banner": "",
+      "items": [
+        {
+          "id": "ozel-gun-tabagi",
+          "name": "Noa'nın Özel Gün Tabağı",
+          "price": 350,
+          "description": "Kısır, patates salatası, çıtır gül böreği, zeytinyağlı sarma ve nefis ıslak kek ile geleneksel lezzetler bir arada",
+          "image": "",
+          "available": true,
+          "popular": true
+        }
+      ]
+    },
+    {
+      "id": "kahvalti-yumurta",
+      "name": "Kahvaltı & Yumurta",
+      "icon": "🍳",
+      "banner": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "serpme-kahvalti",
+          "name": "Serpme Kahvaltı",
+          "price": 800,
+          "description": "Zeytin,Yeşil Zeytin, Bal Kaymak,Tereyağı,Acuka,Kaşar Peynir,Beyaz Peynir, Çeçil Peynir, Domates, Salatalık, Vişne Reçeli, Çilek Reçeli, Çikolata, Mevsim Meyveleri, 2 Haşlanmış Yumurta, Patates, Sosis, Sigara Böreği, Pişi, Pot Çay",
+          "image": "",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "kahvalti-tabagi",
+          "name": "Kahvaltı Tabağı",
+          "price": 290,
+          "description": "Çilek Reçeli, Zeytin, Bal,  Tereyağ, Acuka, Beyaz Peynir, Kaşar Peynir, Çeçil Peynir, Domates, Salatalık, Patates, Yumurta",
+          "image": "https://i.hizliresim.com/e1q5bdd.jpeg",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "pisi-tabagi",
+          "name": "Pişi Tabağı",
+          "price": 220,
+          "description": "Peynir, domates, salatalık, zeytin",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "menemen",
+          "name": "Menemen",
+          "price": 220,
+          "description": "",
+          "image": "https://images.unsplash.com/photo-1590412200988-a436970781fa?w=400&h=400&fit=crop",
+          "available": true
+        },
+        {
+          "id": "omlet",
+          "name": "Omlet",
+          "price": 190,
+          "description": "Kaşarlı - Sucuklu",
+          "image": "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=400&h=400&fit=crop",
+          "available": true
+        },
+        {
+          "id": "sahanda-yumurta",
+          "name": "Sahanda Yumurta",
+          "price": 180,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "peynir-tabagi-mqdjqkdi",
+          "name": "Peynir Tabağı",
+          "description": "",
+          "price": 220,
+          "image": "",
+          "popular": false,
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "tost-gozleme",
+      "name": "Tost & Gözleme",
+      "icon": "🥪",
+      "banner": "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "karisik-gozleme",
+          "name": "Karışık Gözleme",
+          "price": 250,
+          "description": "Domates, salatalık ve zeytin ile servis edilir",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "kasarli-gozleme",
+          "name": "Kaşarlı / Sucuklu / Patatesli Gözleme",
+          "price": 225,
+          "description": "Domates, salatalık ve zeytin ile servis edilir",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "karisik-tost",
+          "name": "Karışık Tost",
+          "price": 190,
+          "description": "Patates kızartması ile servis edilir",
+          "image": "https://i.hizliresim.com/no90kdq.jpeg",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "kasarli-sucuklu-tost",
+          "name": "Kaşarlı / Sucuklu Tost",
+          "price": 170,
+          "description": "Patates kızartması ile servis edilir",
+          "image": "https://i.hizliresim.com/no90kdq.jpeg",
+          "available": true,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "burger-ana-yemekler",
+      "name": "Burger & Ana Yemekler",
+      "icon": "🍔",
+      "banner": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "noa-burger",
+          "name": "NOA Burger",
+          "price": 330,
+          "description": "Patates kızartması ile servis edilir",
+          "image": "",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "cheese-burger",
+          "name": "Cheese Burger",
+          "price": 340,
+          "description": "Patates kızartması ile servis edilir",
+          "image": "",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "crispy-burger",
+          "name": "Crispy Burger",
+          "price": 320,
+          "description": "Patates kızartması ile servis edilir",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "manti-klasik",
+          "name": "Mantı (Klasik)",
+          "price": 280,
+          "description": "",
+          "image": "https://i.hizliresim.com/b0gfm7f.jpeg",
+          "available": true,
+          "popular": false
+        }
+      ]
+    },
+    {
+      "id": "aperatif-ara-sicaklar",
+      "name": "Aperatif & Ara Sıcaklar",
+      "icon": "🍟",
+      "banner": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "noa-combo-mix",
+          "name": "NOA Combo Mix",
+          "price": 300,
+          "description": "Patates Kızartması, Kalem Börek, Sosis, Soğan Halkası, Kroket",
+          "image": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=400&h=400&fit=crop",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "crispy-tavuk-patates",
+          "name": "Crispy Tavuk & Patates",
+          "price": 240,
+          "description": "",
+          "image": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400&h=400&fit=crop",
+          "available": true
+        },
+        {
+          "id": "baharatli-patates",
+          "name": "Baharatlı Patates Kızartması",
+          "price": 100,
+          "description": "",
+          "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=400&fit=crop",
+          "available": true
+        },
+        {
+          "id": "gunun-corbasi",
+          "name": "Günün Çorbası",
+          "price": 150,
+          "description": "",
+          "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=400&fit=crop",
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "salatalar",
+      "name": "Salatalar",
+      "icon": "🥗",
+      "banner": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "tavuklu-sezar",
+          "name": "Tavuklu Sezar Salata",
+          "price": 270,
+          "description": "",
+          "image": "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=400&h=400&fit=crop",
+          "available": true
+        },
+        {
+          "id": "citir-tavuklu-salata",
+          "name": "Çıtır Tavuklu Salata",
+          "price": 270,
+          "description": "",
+          "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop",
+          "available": true
+        },
+        {
+          "id": "ton-balikli-salata",
+          "name": "Ton Balıklı Salata",
+          "price": 270,
+          "description": "",
+          "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=400&fit=crop",
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "tatli-bir-son",
+      "name": "Tatlı Bir Son",
+      "icon": "🍰",
+      "banner": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&h=300&fit=crop",
+      "items": [
+        {
+          "id": "noa-waffle",
+          "name": "NOA Waffle",
+          "price": 280,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": true
+        },
+        {
+          "id": "spoonful",
+          "name": "Spoonful",
+          "price": 210,
+          "description": "",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "ev-yapimi-magnolia",
+          "name": "Ev Yapımı Magnolia",
+          "price": 200,
+          "description": "Çilekli / Muzlu",
+          "image": "",
+          "available": true,
+          "popular": false
+        },
+        {
+          "id": "noa-mozaik-pasta-mqdfzvvr",
+          "name": "NOA Mozaik Pasta",
+          "description": "",
+          "price": 200,
+          "image": "https://i.hizliresim.com/gztyr5b.jpeg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "orman-mey-red-velvet-mqdg88w4",
+          "name": "Orman Mey. RED VELVET",
+          "description": "",
+          "price": 240,
+          "image": "https://i.hizliresim.com/op4k8wz.jpeg",
+          "popular": false,
+          "available": true
+        },
+        {
+          "id": "noa-beyaz-bella-vi-sta-mqdgatw3",
+          "name": "NOA Beyaz Bella VİSTA",
+          "description": "",
+          "price": 250,
+          "image": "https://i.hizliresim.com/jk1ybuj.jpeg",
+          "popular": false,
+          "available": true
+        }
+      ]
+    }
+  ]
+}

@@ -190,30 +190,33 @@ async function saveItem() {
     };
 
     try {
+        let res;
         if (editingItem) {
             item.available = editingItem.wasAvailable;
             item.categoryId = catId;
-            const res = await fetch(`/api/menu/item/${editingItem.catId}/${editingItem.itemId}`, {
+            res = await fetch(`/api/menu/item/${editingItem.catId}/${editingItem.itemId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(item)
             });
-            if (!res.ok) throw new Error();
-            showToast('Ürün güncellendi!');
         } else {
             item.available = true;
-            const res = await fetch(`/api/menu/item/${catId}`, {
+            res = await fetch(`/api/menu/item/${catId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(item)
             });
-            if (!res.ok) throw new Error();
-            showToast('Yeni ürün eklendi!');
         }
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || `HTTP ${res.status}`);
+        }
+        showToast(editingItem ? 'Ürün güncellendi!' : 'Yeni ürün eklendi!');
         closeModal();
         await loadMenuData();
     } catch (err) {
-        showToast('İşlem başarısız!', 'error');
+        showToast('İşlem başarısız: ' + (err.message || 'Bilinmeyen hata'), 'error');
+        console.error('saveItem hata:', err);
     }
 }
 
