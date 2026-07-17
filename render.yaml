@@ -2,8 +2,9 @@ services:
   - type: web
     name: noa-caffe-menu
     runtime: node
-    buildCommand: echo "no build"
+    buildCommand: echo "ready"
     startCommand: node server.js
+    healthCheckPath: /ping
     envVars:
       - key: PUBLIC_URL
         value: https://noa-caffe-menu.onrender.com

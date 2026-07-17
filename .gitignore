@@ -1,3 +1,6 @@
 node_modules
 cloudflared.exe
 *.zip
+public/logo.png
+backups/menu-live-*.json
+backups/menu-20*.json

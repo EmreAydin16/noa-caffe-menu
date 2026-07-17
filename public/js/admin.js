@@ -14,6 +14,9 @@ async function loadMenuData() {
         renderCategoriesGrid();
         populateCategoryFilter();
         populateSettings();
+        if (document.getElementById('page-order')?.classList.contains('active')) {
+            renderOrderPage();
+        }
     } catch (err) {
         showToast('Menü yüklenemedi!', 'error');
     }
@@ -77,6 +80,11 @@ function populateCategoryFilter() {
 
 // ========== ADD / EDIT ITEM ==========
 
+function escapeAttr(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function openAddItemModal() {
     editingItem = null;
     document.getElementById('modalTitle').textContent = 'Yeni Ürün Ekle';
@@ -103,6 +111,8 @@ function openAddItemModal() {
         <div class="form-group">
             <label>Fotoğraf URL</label>
             <input type="url" id="itemImage" class="input" placeholder="https://... (opsiyonel)">
+            <p class="form-hint">Ürün görseli linki. Boş bırakılabilir.</p>
+            <div class="img-preview" id="itemImagePreview"></div>
         </div>
         <div class="form-group" style="display:flex;align-items:center;gap:8px">
             <input type="checkbox" id="itemPopular" style="width:auto">
@@ -110,13 +120,14 @@ function openAddItemModal() {
         </div>
         <button class="btn btn-primary" onclick="saveItem()">Ürünü Kaydet</button>
     `;
+    bindImagePreview('itemImage', 'itemImagePreview');
     openModal();
 }
 
 function openEditItemModal(catId, itemId) {
     const cat = menuData.categories.find(c => c.id === catId);
     const item = cat.items.find(i => i.id === itemId);
-    editingItem = { catId, itemId };
+    editingItem = { catId, itemId, wasAvailable: item.available };
 
     document.getElementById('modalTitle').textContent = 'Ürünü Düzenle';
     const catOptions = menuData.categories.map(c =>
@@ -130,11 +141,11 @@ function openEditItemModal(catId, itemId) {
         </div>
         <div class="form-group">
             <label>Ürün Adı</label>
-            <input type="text" id="itemName" class="input" value="${item.name}">
+            <input type="text" id="itemName" class="input" value="${escapeAttr(item.name)}">
         </div>
         <div class="form-group">
             <label>Açıklama</label>
-            <input type="text" id="itemDescription" class="input" value="${item.description || ''}">
+            <input type="text" id="itemDescription" class="input" value="${escapeAttr(item.description)}">
         </div>
         <div class="form-group">
             <label>Fiyat (₺)</label>
@@ -142,8 +153,9 @@ function openEditItemModal(catId, itemId) {
         </div>
         <div class="form-group">
             <label>Fotoğraf URL</label>
-            <input type="url" id="itemImage" class="input" value="${item.image || ''}" placeholder="https://...">
-            ${item.image ? `<img src="${item.image}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;margin-top:6px">` : ''}
+            <input type="url" id="itemImage" class="input" value="${escapeAttr(item.image)}" placeholder="https://...">
+            <p class="form-hint">Değiştirmek için yeni URL yapıştırın. Silmek için boşaltın.</p>
+            <div class="img-preview" id="itemImagePreview"></div>
         </div>
         <div class="form-group" style="display:flex;align-items:center;gap:8px">
             <input type="checkbox" id="itemPopular" style="width:auto" ${item.popular ? 'checked' : ''}>
@@ -151,6 +163,8 @@ function openEditItemModal(catId, itemId) {
         </div>
         <button class="btn btn-primary" onclick="saveItem()">Değişiklikleri Kaydet</button>
     `;
+    bindImagePreview('itemImage', 'itemImagePreview');
+    updateImagePreview('itemImage', 'itemImagePreview');
     openModal();
 }
 
@@ -172,20 +186,22 @@ async function saveItem() {
         description,
         price,
         image,
-        popular,
-        available: true
+        popular
     };
 
     try {
         if (editingItem) {
+            item.available = editingItem.wasAvailable;
+            item.categoryId = catId;
             const res = await fetch(`/api/menu/item/${editingItem.catId}/${editingItem.itemId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...item, categoryId: catId })
+                body: JSON.stringify(item)
             });
             if (!res.ok) throw new Error();
             showToast('Ürün güncellendi!');
         } else {
+            item.available = true;
             const res = await fetch(`/api/menu/item/${catId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -368,6 +384,137 @@ async function deleteCategory(catId) {
     }
 }
 
+// ========== ORDER ==========
+
+let orderSelectedCatId = null;
+
+function renderOrderPage() {
+    if (!menuData?.categories?.length) {
+        document.getElementById('orderCatList').innerHTML =
+            '<li style="cursor:default;border:none;background:transparent;padding:8px 0;color:var(--text-muted)">Henüz kategori yok.</li>';
+        clearOrderItems();
+        return;
+    }
+
+    if (!orderSelectedCatId || !menuData.categories.some(c => c.id === orderSelectedCatId)) {
+        orderSelectedCatId = menuData.categories[0].id;
+    }
+
+    renderOrderCategories();
+    renderOrderItems(orderSelectedCatId);
+}
+
+function renderOrderCategories() {
+    const list = document.getElementById('orderCatList');
+    list.innerHTML = menuData.categories.map((cat, i) => `
+        <li class="${cat.id === orderSelectedCatId ? 'selected' : ''}" onclick="selectOrderCategory('${cat.id}')">
+            <span class="order-meta">${i + 1}</span>
+            <span class="order-name">${cat.icon} ${cat.name}</span>
+            <span class="order-meta">${cat.items.length} ürün</span>
+            <div class="order-btns" onclick="event.stopPropagation()">
+                <button type="button" ${i === 0 ? 'disabled' : ''} onclick="moveCategory(${i}, -1)" title="Yukarı">↑</button>
+                <button type="button" ${i === menuData.categories.length - 1 ? 'disabled' : ''} onclick="moveCategory(${i}, 1)" title="Aşağı">↓</button>
+            </div>
+        </li>
+    `).join('');
+}
+
+function selectOrderCategory(catId) {
+    orderSelectedCatId = catId;
+    renderOrderCategories();
+    renderOrderItems(catId);
+}
+
+function renderOrderItems(catId) {
+    const cat = menuData.categories.find(c => c.id === catId);
+    if (!cat) {
+        clearOrderItems();
+        return;
+    }
+
+    document.getElementById('orderItemsTitle').textContent = `${cat.icon} ${cat.name}`;
+    document.getElementById('orderItemsHint').textContent =
+        `${cat.items.length} ürün — sırayı değiştirdikten sonra «Sırayı Kaydet» ile kaydedin.`;
+
+    const list = document.getElementById('orderItemList');
+    if (!cat.items.length) {
+        list.innerHTML = '<li style="cursor:default;border:none;background:transparent;padding:8px 0;color:var(--text-muted)">Bu kategoride ürün yok.</li>';
+        return;
+    }
+
+    list.innerHTML = cat.items.map((item, i) => `
+        <li>
+            <span class="order-meta">${i + 1}</span>
+            <span class="order-name">${item.name}</span>
+            <span class="order-meta">${item.price} ₺</span>
+            <div class="order-btns">
+                <button type="button" ${i === 0 ? 'disabled' : ''} onclick="moveItem(${i}, -1)" title="Yukarı">↑</button>
+                <button type="button" ${i === cat.items.length - 1 ? 'disabled' : ''} onclick="moveItem(${i}, 1)" title="Aşağı">↓</button>
+            </div>
+        </li>
+    `).join('');
+}
+
+function clearOrderItems() {
+    document.getElementById('orderItemsTitle').textContent = 'Ürünler';
+    document.getElementById('orderItemsHint').textContent = 'Soldan bir kategori seçin.';
+    document.getElementById('orderItemList').innerHTML = '';
+}
+
+function moveCategory(index, dir) {
+    const next = index + dir;
+    if (next < 0 || next >= menuData.categories.length) return;
+    const cats = menuData.categories;
+    [cats[index], cats[next]] = [cats[next], cats[index]];
+    cats.forEach((c, i) => { c.order = i; });
+    renderOrderCategories();
+}
+
+function moveItem(index, dir) {
+    const cat = menuData.categories.find(c => c.id === orderSelectedCatId);
+    if (!cat) return;
+    const next = index + dir;
+    if (next < 0 || next >= cat.items.length) return;
+    [cat.items[index], cat.items[next]] = [cat.items[next], cat.items[index]];
+    cat.items.forEach((it, i) => { it.order = i; });
+    renderOrderItems(orderSelectedCatId);
+}
+
+async function saveOrder() {
+    const payload = {
+        categories: menuData.categories.map(c => c.id),
+        items: {}
+    };
+    menuData.categories.forEach(cat => {
+        payload.items[cat.id] = cat.items.map(i => i.id);
+    });
+
+    try {
+        const res = await fetch('/api/menu/order', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error();
+        showToast('Sıralama kaydedildi!');
+        await loadMenuData();
+        renderOrderPage();
+    } catch (err) {
+        showToast('Sıralama kaydedilemedi!', 'error');
+    }
+}
+
+async function createBackup() {
+    try {
+        const res = await fetch('/api/backup', { method: 'POST' });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        showToast(`Yedek alındı (${data.timestamp})`);
+    } catch (err) {
+        showToast('Yedek alınamadı!', 'error');
+    }
+}
+
 // ========== SETTINGS ==========
 
 function populateSettings() {
@@ -427,21 +574,52 @@ function bindImagePreview(inputId, previewId) {
 // ========== QR CODE ==========
 
 async function loadQR() {
+    const urlEl = document.getElementById('qrUrl');
+    const img = document.getElementById('qrImage');
+    const imgPrint = document.getElementById('qrImagePrint');
+
     try {
         const res = await fetch('/api/qr-url');
+        if (!res.ok) throw new Error('api');
         const data = await res.json();
-        document.getElementById('qrUrl').textContent = data.url;
-        document.getElementById('qrImage').src = data.qrApiUrl;
-        document.getElementById('qrImagePrint').src = data.qrApiUrl;
+        const menuUrl = data.url || window.location.origin;
+        urlEl.textContent = menuUrl;
+
+        const extUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(menuUrl)}&color=2c1810&bgcolor=ffffff&margin=10`;
+
+        if (typeof QRCode !== 'undefined' && QRCode.toDataURL) {
+            try {
+                const dataUrl = await QRCode.toDataURL(menuUrl, {
+                    width: 400,
+                    margin: 2,
+                    color: { dark: '#2c1810', light: '#ffffff' }
+                });
+                img.src = dataUrl;
+                imgPrint.src = dataUrl;
+                img.dataset.download = dataUrl;
+            } catch {
+                img.src = extUrl;
+                imgPrint.src = extUrl;
+            }
+        } else {
+            img.src = extUrl;
+            imgPrint.src = extUrl;
+        }
     } catch (err) {
-        document.getElementById('qrUrl').textContent = 'QR kod oluşturulamadı';
+        const fallbackUrl = window.location.origin;
+        urlEl.textContent = fallbackUrl;
+        const extUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(fallbackUrl)}&color=2c1810&bgcolor=ffffff&margin=10`;
+        img.src = extUrl;
+        imgPrint.src = extUrl;
     }
 }
 
 function downloadQR() {
     const img = document.getElementById('qrImage');
+    const src = img.dataset.download || img.src;
+    if (!src) { showToast('QR kod henüz oluşturulmadı', 'error'); return; }
     const a = document.createElement('a');
-    a.href = img.src;
+    a.href = src;
     a.download = 'noa-caffe-qr-menu.png';
     a.click();
 }
@@ -478,6 +656,8 @@ function showPage(page) {
 
     document.getElementById(`page-${page}`).classList.add('active');
     document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+
+    if (page === 'order' && menuData) renderOrderPage();
 
     closeSidebar();
 }

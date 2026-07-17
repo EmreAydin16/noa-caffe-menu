@@ -130,7 +130,7 @@ function renderCover() {
     if (coverUrl) {
         cover.innerHTML = `<div style="background-image:url('${coverUrl}')"></div>`;
     } else {
-        cover.innerHTML = `<div style="background:linear-gradient(180deg,rgba(59,37,22,.25) 0%,rgba(59,37,22,.88) 100%),url('/logo.png') center 28%/130px no-repeat,var(--backbtncolor)"></div>`;
+        cover.innerHTML = `<div style="background:linear-gradient(180deg,rgba(59,37,22,.25) 0%,rgba(59,37,22,.88) 100%),url('/logo.svg') center 28%/130px no-repeat,var(--backbtncolor)"></div>`;
     }
 
     const note = r.description
@@ -188,10 +188,10 @@ function openCategory(id) {
     if (currentCat.banner) {
         document.getElementById('listHeadImg').src = currentCat.banner;
         document.getElementById('listHeadImg').onerror = () => {
-            document.getElementById('listHeadImg').src = '/logo.png';
+            document.getElementById('listHeadImg').src = '/logo.svg';
         };
     } else {
-        document.getElementById('listHeadImg').src = '/logo.png';
+            document.getElementById('listHeadImg').src = '/logo.svg';
     }
 
     const available = currentCat.items.filter(i => i.available !== false);

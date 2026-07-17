@@ -1,6 +1,8 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
+const crypto = require('crypto');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_URL = process.env.PUBLIC_URL || 'https://noa-caffe-menu.onrender.com';
@@ -22,6 +24,57 @@ const MIME_TYPES = {
     '.jpg': 'image/jpeg',
     '.ico': 'image/x-icon'
 };
+
+const CACHE_AGE = {
+    '.html': 3600,
+    '.css': 604800,
+    '.js': 604800,
+    '.svg': 604800,
+    '.png': 604800,
+    '.jpg': 604800,
+    '.json': 300
+};
+
+const MENU_CACHE_MS = 120000;
+let menuCache = null;
+let menuCacheTime = 0;
+let menuEtag = '';
+
+function invalidateMenuCache() {
+    menuCache = null;
+    menuCacheTime = 0;
+    menuEtag = '';
+}
+
+function etagFor(body) {
+    return '"' + crypto.createHash('md5').update(body).digest('hex') + '"';
+}
+
+function wantsGzip(req) {
+    return (req.headers['accept-encoding'] || '').includes('gzip');
+}
+
+function sendBody(res, status, headers, body, req) {
+    const buf = Buffer.isBuffer(body) ? body : Buffer.from(body);
+    if (wantsGzip(req) && buf.length > 512) {
+        zlib.gzip(buf, (err, compressed) => {
+            if (err) {
+                res.writeHead(status, { ...headers, 'Content-Length': buf.length });
+                return res.end(buf);
+            }
+            res.writeHead(status, {
+                ...headers,
+                'Content-Encoding': 'gzip',
+                'Content-Length': compressed.length,
+                'Vary': 'Accept-Encoding'
+            });
+            res.end(compressed);
+        });
+        return;
+    }
+    res.writeHead(status, { ...headers, 'Content-Length': buf.length });
+    res.end(buf);
+}
 
 function readMenuFromFile() {
     return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
@@ -51,9 +104,62 @@ async function ensureSupabaseBucket() {
     throw new Error(`Supabase bucket hatasi: ${res.status} ${err}`);
 }
 
-async function readMenuFromSupabase() {
-    await ensureSupabaseBucket();
+function backupTimestamp() {
+    return new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+}
 
+function sortMenu(data) {
+    if (!data?.categories) return data;
+
+    data.categories.forEach((cat, i) => {
+        if (cat.order == null) cat.order = i;
+    });
+    data.categories.sort((a, b) => a.order - b.order);
+
+    data.categories.forEach(cat => {
+        if (!Array.isArray(cat.items)) cat.items = [];
+        cat.items.forEach((item, i) => {
+            if (item.order == null) item.order = i;
+        });
+        cat.items.sort((a, b) => a.order - b.order);
+    });
+
+    return data;
+}
+
+async function uploadSupabaseFile(filePath, content) {
+    await ensureSupabaseBucket();
+    const res = await fetch(
+        `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${filePath}`,
+        {
+            method: 'POST',
+            headers: supabaseHeaders({
+                'Content-Type': 'application/json',
+                'x-upsert': 'true'
+            }),
+            body: typeof content === 'string' ? content : JSON.stringify(content, null, 2)
+        }
+    );
+    if (!res.ok) throw new Error(`Supabase yedek hatasi: ${res.status} ${await res.text()}`);
+}
+
+async function saveBackup(data) {
+    const ts = backupTimestamp();
+    const payload = JSON.stringify(data, null, 2);
+
+    const localDir = path.join(__dirname, 'backups');
+    fs.mkdirSync(localDir, { recursive: true });
+    fs.writeFileSync(path.join(localDir, `menu-${ts}.json`), payload, 'utf8');
+    fs.writeFileSync(path.join(localDir, 'menu-latest.json'), payload, 'utf8');
+
+    if (USE_SUPABASE) {
+        await uploadSupabaseFile(`backups/menu-${ts}.json`, payload);
+        await uploadSupabaseFile('backups/menu-latest.json', payload);
+    }
+    return ts;
+}
+
+async function readMenuFromSupabase() {
     const res = await fetch(
         `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${SUPABASE_FILE}`,
         { headers: supabaseHeaders() }
@@ -94,13 +200,109 @@ async function writeMenuToSupabase(data) {
 }
 
 async function readMenu() {
-    if (USE_SUPABASE) return readMenuFromSupabase();
-    return readMenuFromFile();
+    if (menuCache && Date.now() - menuCacheTime < MENU_CACHE_MS) {
+        return menuCache;
+    }
+
+    let data;
+    if (USE_SUPABASE) {
+        try {
+            data = sortMenu(await readMenuFromSupabase());
+        } catch (err) {
+            console.error('Supabase okuma hatasi, yedek deneniyor:', err.message);
+            data = null;
+        }
+    }
+
+    if (!data) {
+        const backupPath = path.join(__dirname, 'backups', 'menu-latest.json');
+        if (fs.existsSync(backupPath)) {
+            console.warn('backups/menu-latest.json kullaniliyor');
+            data = sortMenu(JSON.parse(fs.readFileSync(backupPath, 'utf8')));
+        } else {
+            data = sortMenu(readMenuFromFile());
+        }
+    }
+
+    menuCache = data;
+    menuCacheTime = Date.now();
+    menuEtag = etagFor(JSON.stringify(data));
+    return data;
 }
 
 async function writeMenu(data) {
+    sortMenu(data);
+    invalidateMenuCache();
+
+    try {
+        if (USE_SUPABASE) {
+            const res = await fetch(
+                `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${SUPABASE_FILE}`,
+                { headers: supabaseHeaders() }
+            );
+            if (res.ok) await saveBackup(await res.json());
+        } else if (fs.existsSync(DATA_FILE)) {
+            await saveBackup(readMenuFromFile());
+        }
+    } catch (err) {
+        console.warn('Yedek alinamadi:', err.message);
+    }
+
     if (USE_SUPABASE) return writeMenuToSupabase(data);
     writeMenuToFile(data);
+}
+
+function applyOrder(data, body) {
+    if (body.categories?.length) {
+        const map = new Map(data.categories.map(c => [c.id, c]));
+        const ordered = [];
+        body.categories.forEach((id, i) => {
+            const cat = map.get(id);
+            if (cat) {
+                cat.order = i;
+                ordered.push(cat);
+            }
+        });
+        data.categories.forEach(cat => {
+            if (!body.categories.includes(cat.id)) {
+                cat.order = ordered.length;
+                ordered.push(cat);
+            }
+        });
+        data.categories = ordered;
+    }
+
+    if (body.items && typeof body.items === 'object') {
+        for (const [catId, itemIds] of Object.entries(body.items)) {
+            const cat = data.categories.find(c => c.id === catId);
+            if (!cat || !Array.isArray(itemIds)) continue;
+            const map = new Map(cat.items.map(it => [it.id, it]));
+            const ordered = [];
+            itemIds.forEach((id, i) => {
+                const item = map.get(id);
+                if (item) {
+                    item.order = i;
+                    ordered.push(item);
+                }
+            });
+            cat.items.forEach(item => {
+                if (!itemIds.includes(item.id)) {
+                    item.order = ordered.length;
+                    ordered.push(item);
+                }
+            });
+            cat.items = ordered;
+        }
+    }
+
+    return sortMenu(data);
+}
+
+function getMenuUrl(req) {
+    if (PUBLIC_URL) return PUBLIC_URL.replace(/\/$/, '');
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const proto = req.headers['x-forwarded-proto'] || 'http';
+    return `${proto}://${host}`.replace(/\/$/, '');
 }
 
 function slugify(text) {
@@ -110,9 +312,47 @@ function slugify(text) {
         .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-function sendJSON(res, data, status = 200) {
-    res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify(data));
+function sendJSON(res, data, status = 200, req = null, cacheSeconds = 0) {
+    const body = JSON.stringify(data);
+    const headers = { 'Content-Type': 'application/json; charset=utf-8' };
+    if (cacheSeconds > 0) {
+        headers['Cache-Control'] = `public, max-age=${cacheSeconds}`;
+        headers.ETag = etagFor(body);
+        if (req?.headers['if-none-match'] === headers.ETag) {
+            res.writeHead(304);
+            return res.end();
+        }
+    } else {
+        headers['Cache-Control'] = 'no-store';
+    }
+    sendBody(res, status, headers, body, req || { headers: {} });
+}
+
+function serveStatic(res, filePath, req) {
+    const ext = path.extname(filePath);
+    const mime = MIME_TYPES[ext] || 'application/octet-stream';
+
+    if (!fs.existsSync(filePath)) {
+        res.writeHead(404);
+        res.end('Not found');
+        return;
+    }
+
+    const stat = fs.statSync(filePath);
+    const content = fs.readFileSync(filePath);
+    const maxAge = CACHE_AGE[ext] || 3600;
+    const etag = '"' + stat.mtimeMs + '-' + stat.size + '"';
+
+    if (req?.headers['if-none-match'] === etag) {
+        res.writeHead(304, { ETag: etag, 'Cache-Control': `public, max-age=${maxAge}` });
+        return res.end();
+    }
+
+    sendBody(res, 200, {
+        'Content-Type': mime,
+        'Cache-Control': `public, max-age=${maxAge}`,
+        ETag: etag
+    }, content, req || { headers: {} });
 }
 
 function parseBody(req) {
@@ -127,29 +367,28 @@ function parseBody(req) {
     });
 }
 
-function serveStatic(res, filePath) {
-    const ext = path.extname(filePath);
-    const mime = MIME_TYPES[ext] || 'application/octet-stream';
-
-    if (!fs.existsSync(filePath)) {
-        res.writeHead(404);
-        res.end('Not found');
-        return;
-    }
-
-    const content = fs.readFileSync(filePath);
-    res.writeHead(200, { 'Content-Type': mime });
-    res.end(content);
-}
-
 const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     const pathname = url.pathname;
     const method = req.method;
 
     try {
+        if (pathname === '/health' && method === 'GET') {
+            return sendJSON(res, { ok: true, ts: Date.now() }, 200, req, 0);
+        }
+
+        if (pathname === '/ping' && method === 'GET') {
+            res.writeHead(200, { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' });
+            return res.end('ok');
+        }
+
         if (pathname === '/api/menu' && method === 'GET') {
-            return sendJSON(res, await readMenu());
+            const data = await readMenu();
+            if (menuEtag && req.headers['if-none-match'] === menuEtag) {
+                res.writeHead(304, { ETag: menuEtag, 'Cache-Control': 'public, max-age=120' });
+                return res.end();
+            }
+            return sendJSON(res, data, 200, req, 120);
         }
 
         if (pathname.match(/^\/api\/menu\/item\/([^/]+)$/) && method === 'POST') {
@@ -166,7 +405,8 @@ const server = http.createServer(async (req, res) => {
                 price: Number(body.price),
                 image: body.image || '',
                 popular: body.popular || false,
-                available: body.available !== undefined ? body.available : true
+                available: body.available !== undefined ? body.available : true,
+                order: cat.items.length
             };
             cat.items.push(newItem);
             await writeMenu(data);
@@ -221,11 +461,13 @@ const server = http.createServer(async (req, res) => {
         if (pathname === '/api/menu/category' && method === 'POST') {
             const body = await parseBody(req);
             const data = await readMenu();
+            const maxOrder = data.categories.reduce((m, c) => Math.max(m, c.order ?? -1), -1);
             const newCat = {
                 id: slugify(body.name) + '-' + Date.now().toString(36),
                 name: body.name,
                 icon: body.icon || '📋',
                 banner: body.banner || '',
+                order: maxOrder + 1,
                 items: []
             };
             data.categories.push(newCat);
@@ -263,23 +505,36 @@ const server = http.createServer(async (req, res) => {
             return sendJSON(res, data.restaurant);
         }
 
+        if (pathname === '/api/backup' && method === 'POST') {
+            const data = await readMenu();
+            const ts = await saveBackup(data);
+            return sendJSON(res, { success: true, timestamp: ts });
+        }
+
+        if (pathname === '/api/menu/order' && method === 'PUT') {
+            const body = await parseBody(req);
+            const data = await readMenu();
+            applyOrder(data, body);
+            await writeMenu(data);
+            return sendJSON(res, { success: true, categories: data.categories.map(c => c.id) });
+        }
+
         if (pathname === '/api/qr-url' && method === 'GET') {
-            const menuUrl = PUBLIC_URL || `http://${req.headers.host}`;
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(menuUrl)}&color=2c1810&bgcolor=ffffff&margin=10`;
-            return sendJSON(res, { url: menuUrl, qrApiUrl });
+            const menuUrl = getMenuUrl(req);
+            return sendJSON(res, { url: menuUrl }, 200, req, 3600);
         }
 
         if (pathname === '/') {
-            return serveStatic(res, path.join(__dirname, 'public', 'index.html'));
+            return serveStatic(res, path.join(__dirname, 'public', 'index.html'), req);
         }
 
         if (pathname === '/admin') {
-            return serveStatic(res, path.join(__dirname, 'public', 'admin.html'));
+            return serveStatic(res, path.join(__dirname, 'public', 'admin.html'), req);
         }
 
         const staticPath = path.join(__dirname, 'public', pathname);
         if (fs.existsSync(staticPath) && fs.statSync(staticPath).isFile()) {
-            return serveStatic(res, staticPath);
+            return serveStatic(res, staticPath, req);
         }
 
         res.writeHead(404);
@@ -291,7 +546,7 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log('');
     console.log('  Noa Caffe & Co - QR Menu Sistemi');
     console.log('  -----------------------------------');

@@ -372,6 +372,83 @@ body {
     border-top: 1px solid var(--border);
 }
 
+/* ========== ORDER PAGE ========== */
+.order-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.order-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.order-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.order-list {
+    list-style: none;
+    margin-top: 12px;
+}
+
+.order-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.order-list li.selected {
+    border-color: var(--accent);
+    background: #faf7f2;
+}
+
+.order-list li .order-name {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.order-list li .order-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.order-btns {
+    display: flex;
+    gap: 4px;
+}
+
+.order-btns button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.order-btns button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+    .order-layout { grid-template-columns: 1fr; }
+}
+
 .form-divider {
     margin: 24px 0 16px;
     padding-top: 20px;
@@ -388,6 +465,16 @@ body {
     font-size: 0.78rem;
     color: var(--text-muted);
     line-height: 1.4;
+}
+
+/* ========== SETTINGS ========== */
+.settings-form {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 28px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    max-width: 640px;
 }
 
 .img-preview {
@@ -424,16 +511,6 @@ body {
     color: var(--text-muted);
     font-size: 0.8rem;
     border: 1px dashed var(--border);
-}
-
-/* ========== SETTINGS ========== */
-.settings-form {
-    background: var(--bg-card);
-    border-radius: var(--radius);
-    padding: 28px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    max-width: 560px;
 }
 
 .form-group {

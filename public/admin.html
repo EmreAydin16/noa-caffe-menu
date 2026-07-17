@@ -7,15 +7,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/admin.css">
-    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="stylesheet" href="/css/admin.css?v=2">
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
 </head>
 <body>
     <div class="admin-app">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <img src="/logo.png" alt="Logo" class="sidebar-logo">
+                <img src="/logo.svg" alt="Logo" class="sidebar-logo">
                 <h2>Noa Caffe & Co</h2>
                 <span class="sidebar-badge">Yönetim Paneli</span>
             </div>
@@ -25,6 +25,9 @@
                 </a>
                 <a href="#" class="nav-item" data-page="categories" onclick="showPage('categories')">
                     <span class="nav-icon">📂</span> Kategoriler
+                </a>
+                <a href="#" class="nav-item" data-page="order" onclick="showPage('order')">
+                    <span class="nav-icon">↕️</span> Sıralama
                 </a>
                 <a href="#" class="nav-item" data-page="settings" onclick="showPage('settings')">
                     <span class="nav-icon">⚙️</span> Ayarlar
@@ -95,6 +98,29 @@
                 <div class="categories-grid" id="categoriesGrid"></div>
             </div>
 
+            <!-- Sıralama -->
+            <div class="page" id="page-order">
+                <div class="page-header">
+                    <div>
+                        <h1>Sıralama</h1>
+                        <p class="page-subtitle">Kategori ve ürün sırasını belirleyin. Menüde bu sırayla görünür.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveOrder()">💾 Sırayı Kaydet</button>
+                </div>
+                <div class="order-layout">
+                    <div class="order-panel">
+                        <h3>Kategoriler</h3>
+                        <p class="form-hint">Mokteyl gibi yeni kategori için <strong>Kategoriler</strong> sayfasından ekleyin, sonra burada sıralayın.</p>
+                        <ul class="order-list" id="orderCatList"></ul>
+                    </div>
+                    <div class="order-panel">
+                        <h3 id="orderItemsTitle">Ürünler</h3>
+                        <p class="form-hint" id="orderItemsHint">Soldan bir kategori seçin.</p>
+                        <ul class="order-list" id="orderItemList"></ul>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings Page -->
             <div class="page" id="page-settings">
                 <div class="page-header">
@@ -132,6 +158,9 @@
                         <div class="img-preview" id="coverPreview"></div>
                     </div>
                     <button class="btn btn-primary" onclick="saveSettings()">Ayarları Kaydet</button>
+                    <div class="form-divider">Yedekleme</div>
+                    <p class="form-hint">Her kayıttan önce otomatik yedek alınır. İsterseniz anlık yedek de oluşturabilirsiniz.</p>
+                    <button class="btn btn-outline" onclick="createBackup()">📦 Anlık Yedek Al</button>
                 </div>
             </div>
 
@@ -158,7 +187,7 @@
                     <div class="qr-card">
                         <div class="qr-print-preview" id="qrPrintPreview">
                             <div class="print-card">
-                                <img src="/logo.png" alt="Logo" class="print-logo">
+                                <img src="/logo.svg" alt="Logo" class="print-logo">
                                 <h2>Noa Caffe & Co</h2>
                                 <p class="print-subtitle">Menümüzü görüntülemek için QR kodu tarayın</p>
                                 <img id="qrImagePrint" src="" alt="QR" class="print-qr">
@@ -190,6 +219,7 @@
     <!-- Toast -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="/js/admin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+    <script src="/js/admin.js?v=2"></script>
 </body>
 </html>
