@@ -26,7 +26,7 @@ const MIME_TYPES = {
 };
 
 const CACHE_AGE = {
-    '.html': 3600,
+    '.html': 0,
     '.css': 604800,
     '.js': 604800,
     '.svg': 604800,
@@ -342,15 +342,18 @@ function serveStatic(res, filePath, req) {
     const content = fs.readFileSync(filePath);
     const maxAge = CACHE_AGE[ext] || 3600;
     const etag = '"' + stat.mtimeMs + '-' + stat.size + '"';
+    const cacheHeader = maxAge > 0
+        ? `public, max-age=${maxAge}`
+        : 'no-cache';
 
     if (req?.headers['if-none-match'] === etag) {
-        res.writeHead(304, { ETag: etag, 'Cache-Control': `public, max-age=${maxAge}` });
+        res.writeHead(304, { ETag: etag, 'Cache-Control': cacheHeader });
         return res.end();
     }
 
     sendBody(res, 200, {
         'Content-Type': mime,
-        'Cache-Control': `public, max-age=${maxAge}`,
+        'Cache-Control': cacheHeader,
         ETag: etag
     }, content, req || { headers: {} });
 }
