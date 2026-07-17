@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadMenuData() {
     try {
-        const res = await fetch('/api/menu');
+        const res = await fetch('/api/menu', { cache: 'no-store' });
         menuData = await res.json();
         renderMenuTable();
         renderCategoriesGrid();

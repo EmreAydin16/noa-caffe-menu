@@ -16,7 +16,7 @@ const PAGES = {
 document.addEventListener('DOMContentLoaded', async () => {
     wire();
     try {
-        const r = await fetch('/api/menu');
+        const r = await fetch('/api/menu', { cache: 'no-cache' });
         D = await r.json();
         renderCover();
         renderCategories();
