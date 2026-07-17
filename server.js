@@ -340,7 +340,7 @@ function serveStatic(res, filePath, req) {
 
     const stat = fs.statSync(filePath);
     const content = fs.readFileSync(filePath);
-    const maxAge = CACHE_AGE[ext] || 3600;
+    const maxAge = ext in CACHE_AGE ? CACHE_AGE[ext] : 3600;
     const etag = '"' + stat.mtimeMs + '-' + stat.size + '"';
     const cacheHeader = maxAge > 0
         ? `public, max-age=${maxAge}`
